@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, Phone, X, Sparkles, Clock } from 'lucide-react';
+import { Calendar, Phone, X } from 'lucide-react';
 import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface LeftBookingLauncherProps {
@@ -12,9 +12,9 @@ export const LeftBookingLauncher: React.FC<LeftBookingLauncherProps> = ({ onOpen
   const userDismissedRef = useRef(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Uneven periodic popup interval (e.g. 3.5s -> 5s -> 4s -> 6s)
+  // Uneven periodic popup interval (e.g. 4s -> 6s -> 5s -> 7s)
   useEffect(() => {
-    const intervals = [3500, 5200, 4100, 6300, 4800];
+    const intervals = [4000, 6200, 4800, 7000, 5400];
     let step = 0;
 
     const scheduleNext = () => {
@@ -23,16 +23,16 @@ export const LeftBookingLauncher: React.FC<LeftBookingLauncherProps> = ({ onOpen
 
       timerRef.current = setTimeout(() => {
         if (!userDismissedRef.current && !isHovered) {
-          // Open popup
+          // Smoothly slide open popup
           setIsOpen(true);
 
-          // Auto close after 3 seconds if not hovered
+          // Auto tuck back after 3.6 seconds if user is not hovering
           setTimeout(() => {
             if (!isHovered && !userDismissedRef.current) {
               setIsOpen(false);
               scheduleNext();
             }
-          }, 3200);
+          }, 3600);
         } else if (!userDismissedRef.current) {
           scheduleNext();
         }
@@ -58,35 +58,42 @@ export const LeftBookingLauncher: React.FC<LeftBookingLauncherProps> = ({ onOpen
         setIsHovered(false);
       }}
     >
-      {isOpen ? (
-        <div className="bg-[#121418]/95 backdrop-blur-md border border-amber-500/40 rounded-2xl p-3.5 shadow-[0_15px_50px_rgba(0,0,0,0.8),0_0_25px_rgba(255,214,10,0.15)] w-72 space-y-2.5 animate-in fade-in zoom-in-95 duration-300">
-          <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
-            <div className="flex items-center gap-1.5">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                Quick Studio Connect
-              </span>
-            </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                userDismissedRef.current = true;
-                setIsOpen(false);
-              }}
-              className="p-1 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
-              title="Close"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
+      {/* Smoothly Animated Slide-up & Fade Popup Card */}
+      <div 
+        className={`absolute bottom-full left-0 mb-3 w-72 bg-[#121418]/95 backdrop-blur-xl border border-amber-500/35 rounded-2xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_20px_rgba(255,214,10,0.12)] space-y-3 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] origin-bottom-left ${
+          isOpen
+            ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+            : 'opacity-0 translate-y-3 scale-95 pointer-events-none'
+        }`}
+      >
+        <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="text-xs font-bold text-white uppercase tracking-wider">
+              Quick Studio Connect
+            </span>
           </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              userDismissedRef.current = true;
+              setIsOpen(false);
+            }}
+            className="p-1 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-colors cursor-pointer"
+            title="Dismiss"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
 
-          <p className="text-[11px] text-zinc-400 leading-tight">
-            Consult our master tattoo artists or schedule instant priority slot in Hisar.
-          </p>
+        <p className="text-[11px] text-zinc-400 leading-tight">
+          Consult master tattoo artists or schedule instant priority slot in Hisar.
+        </p>
 
+        <div className="space-y-2 pt-0.5">
           <button
             onClick={() => {
               setIsOpen(false);
@@ -116,22 +123,27 @@ export const LeftBookingLauncher: React.FC<LeftBookingLauncherProps> = ({ onOpen
             <span>Direct Call Studio</span>
           </a>
         </div>
-      ) : (
-        <button
-          onClick={() => {
-            userDismissedRef.current = false;
-            setIsOpen(true);
-          }}
-          className="group flex items-center gap-2.5 bg-[#121418]/90 hover:bg-[#181A20] border border-white/10 hover:border-amber-400/50 text-zinc-300 hover:text-white px-4 py-2.5 rounded-full text-xs font-semibold shadow-xl shadow-black/70 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FFD60A]"></span>
-          </span>
-          <Calendar className="w-3.5 h-3.5 text-[#FFD60A] group-hover:rotate-6 transition-transform" />
-          <span>Quick Book</span>
-        </button>
-      )}
+      </div>
+
+      {/* Floating Anchor Button with Smooth State Animation */}
+      <button
+        onClick={() => {
+          userDismissedRef.current = false;
+          setIsOpen(!isOpen);
+        }}
+        className={`group flex items-center gap-2.5 px-4 py-2.5 rounded-full text-xs font-semibold shadow-xl shadow-black/70 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer ${
+          isOpen
+            ? 'bg-[#FFD60A] text-black shadow-amber-500/20'
+            : 'bg-[#121418]/95 hover:bg-[#181A20] border border-white/10 hover:border-amber-400/50 text-zinc-300 hover:text-white'
+        }`}
+      >
+        <span className="relative flex h-2 w-2">
+          <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isOpen ? 'bg-black' : 'bg-amber-400'}`}></span>
+          <span className={`relative inline-flex rounded-full h-2 w-2 ${isOpen ? 'bg-black' : 'bg-[#FFD60A]'}`}></span>
+        </span>
+        <Calendar className={`w-3.5 h-3.5 group-hover:rotate-6 transition-transform ${isOpen ? 'text-black' : 'text-[#FFD60A]'}`} />
+        <span>{isOpen ? 'Close Menu' : 'Quick Book'}</span>
+      </button>
     </aside>
   );
 };
