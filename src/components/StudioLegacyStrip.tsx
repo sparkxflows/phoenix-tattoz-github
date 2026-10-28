@@ -68,10 +68,10 @@ export const StudioLegacyStrip: React.FC<StudioLegacyStripProps> = ({ onOpenBook
             <div className="flex items-center gap-3 shrink-0">
               <Link
                 to="/gallery"
-                className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-zinc-300 hover:text-[#FFD60A] border border-zinc-700/80 hover:border-amber-400/50 bg-zinc-900/80 px-4 py-2.5 rounded-xl transition-all shadow-sm"
+                className="group inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-zinc-300 hover:text-[#FFD60A] border border-zinc-700/80 hover:border-amber-400/50 bg-zinc-900/90 hover:bg-zinc-800 px-4 py-2.5 rounded-xl transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-sm"
               >
                 <span>View Full 10+ Gallery</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[#FFD60A]" />
+                <ArrowRight className="w-3.5 h-3.5 text-[#FFD60A] group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>
@@ -156,17 +156,17 @@ export const StudioLegacyStrip: React.FC<StudioLegacyStripProps> = ({ onOpenBook
               {onOpenBooking && (
                 <button
                   onClick={() => onOpenBooking()}
-                  className="bg-[#FFD60A] hover:bg-[#ffe033] active:scale-[0.98] text-[#0B0B0B] font-extrabold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md transition-all cursor-pointer"
+                  className="group bg-[#FFD60A] hover:bg-[#ffe033] hover:scale-[1.03] active:scale-95 text-[#0B0B0B] font-extrabold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md hover:shadow-amber-500/20 transition-all duration-300 cursor-pointer"
                 >
                   <span className="inline-flex items-center justify-center gap-2">
-                    <Calendar className="w-4 h-4 stroke-[2.5]" />
+                    <Calendar className="w-4 h-4 stroke-[2.5] group-hover:rotate-6 transition-transform" />
                     <span>Book Consultation</span>
                   </span>
                 </button>
               )}
               <Link
                 to="/gallery"
-                className="bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-700/80 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all"
+                className="bg-zinc-900/90 hover:bg-zinc-800 hover:scale-[1.03] active:scale-95 text-zinc-200 hover:text-white border border-zinc-700/80 hover:border-amber-400/50 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300"
               >
                 Full Gallery &rarr;
               </Link>

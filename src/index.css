@@ -147,6 +147,46 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 6px 24px rgba(255, 214, 10, 0.55);
 }
 
+/* ============================================================
+   SMOOTH UNIVERSAL INTERACTION & BUTTON ANIMATIONS
+   ============================================================ */
+
+/* Universal button transition and smooth micro-lift */
+button, 
+a.inline-flex, 
+a.flex,
+[role="button"] {
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              background-color 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              border-color 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              color 0.2s ease !important;
+}
+
+/* Subtle, appealing hover animation without harsh overglow */
+button:hover:not(:disabled),
+a.inline-flex:hover,
+a.flex:hover {
+  transform: translateY(-2px);
+}
+
+button:active:not(:disabled),
+a.inline-flex:active,
+a.flex:active {
+  transform: translateY(0px) scale(0.97);
+}
+
+/* Interactive Card & Thumbnail Smooth Elevation */
+.interactive-card {
+  transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.interactive-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.8);
+}
+
 /* Accessible focus outline */
 a:focus-visible,
 button:focus-visible,
