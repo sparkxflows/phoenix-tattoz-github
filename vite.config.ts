@@ -4,8 +4,18 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(({ command }) => {
+  // Determine base path:
+  // - GitHub Pages needs '/phoenix-tattoz-github/'
+  // - Vercel and local dev need '/'
+  const isGitHubPages = Boolean(
+    (process.env.GITHUB_ACTIONS === 'true' && !process.env.VERCEL) ||
+    process.env.BUILD_FOR_GH === 'true' ||
+    process.env.VITE_BASE_GH === 'true'
+  );
+  const base = isGitHubPages ? '/phoenix-tattoz-github/' : '/';
+
   return {
-    base: command === 'build' ? './' : '/',
+    base,
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {

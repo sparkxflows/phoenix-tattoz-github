@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, MapPin, Clock, Instagram, Facebook, Youtube, Calendar } from 'lucide-react';
+import { Phone, MapPin, Clock, Instagram, Facebook, Youtube, Calendar, Lock } from 'lucide-react';
 import { PhoenixLogo } from './PhoenixLogo';
 import { STUDIO_INFO } from '../data/studioData';
 import { WhatsAppIcon } from './WhatsAppIcon';
@@ -161,10 +161,18 @@ export const Footer: React.FC = () => {
 
         {/* Bottom bar */}
         <div className="mt-12 pt-6 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-center sm:text-left">
+          <div className="flex flex-wrap items-center gap-3 text-center sm:text-left">
             <p className="text-xs text-zinc-500">
               &copy; {new Date().getFullYear()} Phoenix Tattooz Studio &amp; Academy. All rights reserved.
             </p>
+            <span className="text-zinc-700 hidden sm:inline">&bull;</span>
+            <Link
+              to="/admin"
+              className="text-xs text-zinc-500 hover:text-[#FFD60A] transition-colors inline-flex items-center gap-1 font-medium"
+            >
+              <Lock className="w-3 h-3" />
+              <span>Studio Admin</span>
+            </Link>
           </div>
 
           {/* Social Icons */}
