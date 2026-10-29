@@ -148,43 +148,59 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================================
-   SMOOTH UNIVERSAL INTERACTION & BUTTON ANIMATIONS
+   SMOOTH UNIVERSAL INTERACTION & PERFORMANCE-TUNED ANIMATIONS
    ============================================================ */
 
-/* Universal button transition and smooth micro-lift */
+/* Universal button & interactive link transitions (GPU-composited properties only) */
 button, 
 a.inline-flex, 
 a.flex,
 [role="button"] {
-  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), 
-              background-color 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), 
-              border-color 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), 
-              box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-              color 0.2s ease !important;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              background-color 0.18s ease, 
+              border-color 0.18s ease, 
+              color 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Subtle, appealing hover animation without harsh overglow */
-button:hover:not(:disabled),
-a.inline-flex:hover,
-a.flex:hover {
-  transform: translateY(-2px);
+/* Smooth micro-lift ONLY on devices with a real pointer/mouse (eliminates touch-scroll stutter) */
+@media (hover: hover) and (pointer: fine) {
+  button:hover:not(:disabled),
+  a.inline-flex:hover,
+  a.flex:hover {
+    transform: translateY(-2px);
+  }
+
+  .interactive-card:hover {
+    transform: translateY(-3px);
+  }
 }
 
+/* Lightweight tactile feedback on click/press */
 button:active:not(:disabled),
 a.inline-flex:active,
 a.flex:active {
-  transform: translateY(0px) scale(0.97);
+  transform: scale(0.98);
 }
 
 /* Interactive Card & Thumbnail Smooth Elevation */
 .interactive-card {
-  transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
-              border-color 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-              box-shadow 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.2s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
-.interactive-card:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.8);
+
+/* Hardware accelerated smooth rendering utility */
+.gpu-layer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Below-the-fold content visibility optimization */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 700px;
 }
 
 /* Accessible focus outline */

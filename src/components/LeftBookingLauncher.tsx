@@ -14,15 +14,23 @@ export const LeftBookingLauncher: React.FC<LeftBookingLauncherProps> = ({ onOpen
 
   // Uneven periodic popup interval (e.g. 4s -> 6s -> 5s -> 7s)
   useEffect(() => {
-    const intervals = [4000, 6200, 4800, 7000, 5400];
+    // Disable background timer on mobile screens (<768px) where launcher is hidden
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return;
+    }
+
+    const intervals = [4500, 7000, 5500, 8000, 6000];
     let step = 0;
 
     const scheduleNext = () => {
+      // Don't trigger if user switched tab or dismissed
+      if (typeof document !== 'undefined' && document.hidden) return;
+
       const delay = intervals[step % intervals.length];
       step++;
 
       timerRef.current = setTimeout(() => {
-        if (!userDismissedRef.current && !isHovered) {
+        if (!userDismissedRef.current && !isHovered && (!document.hidden)) {
           // Smoothly slide open popup
           setIsOpen(true);
 

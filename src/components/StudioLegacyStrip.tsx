@@ -88,9 +88,11 @@ export const StudioLegacyStrip: React.FC<StudioLegacyStripProps> = ({ onOpenBook
                 <div className="relative aspect-[4/5] bg-zinc-950 overflow-hidden">
                   <img
                     src={item.image}
-                    alt={item.title} loading="eager"
+                    alt={item.title}
+                    loading={index < 2 ? 'eager' : 'lazy'}
+                    decoding="async"
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover filter contrast-[1.05] brightness-[0.95] group-hover:scale-105 group-hover:brightness-100 transition-all duration-500"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
 
                   {/* Dark Vignette & Gradient Scrim */}

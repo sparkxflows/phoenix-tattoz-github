@@ -60,10 +60,32 @@ export const Home: React.FC<HomeProps> = ({ onOpenBooking }) => {
     if (!video || !activeVideoSrc || heroSettings.bgMediaType === 'image') return;
     video.defaultMuted = true;
     video.muted = true;
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {});
+
+    // IntersectionObserver: automatically pause video when user scrolls away to save CPU/battery
+    let observer: IntersectionObserver | null = null;
+    if ('IntersectionObserver' in window) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const playPromise = video.play();
+              if (playPromise !== undefined) playPromise.catch(() => {});
+            } else {
+              video.pause();
+            }
+          });
+        },
+        { threshold: 0.15 }
+      );
+      observer.observe(video);
+    } else {
+      const playPromise = video.play();
+      if (playPromise !== undefined) playPromise.catch(() => {});
     }
+
+    return () => {
+      if (observer) observer.disconnect();
+    };
   }, [activeVideoSrc, heroSettings.bgMediaType]);
 
   // Gifts & Rewards Modal State
@@ -92,7 +114,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenBooking }) => {
               loop
               muted
               playsInline
-              preload="auto"
+              preload="metadata"
               poster={heroSettings.bgVideoPoster || heroSettings.heroImage}
               onError={() => {
                 if (activeVideoSrc !== LOCAL_VIDEO_URL) {

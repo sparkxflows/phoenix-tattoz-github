@@ -392,7 +392,9 @@ export const Gallery: React.FC<GalleryProps> = ({ onOpenBooking }) => {
                     <img
                       src={item.image || 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=900&q=80'}
                       alt={item.title || 'Studio Tattoo'}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
 
                     {/* Gradient shadow for text readability */}
