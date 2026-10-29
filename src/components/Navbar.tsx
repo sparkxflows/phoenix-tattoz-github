@@ -67,7 +67,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onOpenRewards }) 
     { name: 'Contact', pagePath: '/contact' },
   ];
 
-  const handleNavClick = (link: typeof navLinks[0], e: React.MouseEvent) => {
+  // Mobile drawer links: Gallery removed per client request (already on bottom bar)
+  const mobileNavLinks = [
+    { name: 'Home', pagePath: '/' },
+    { name: 'About', pagePath: '/about' },
+    { name: 'Artists', pagePath: '/artists' },
+    { name: 'Experience', pagePath: '/experience' },
+    { name: 'Reviews', pagePath: '/reviews' },
+    { name: 'Contact', pagePath: '/contact' },
+  ];
+
+  const handleNavClick = (link: { pagePath: string; isDropdown?: boolean }, e: React.MouseEvent) => {
     if (link.isDropdown) return;
     
     if (link.pagePath === '/' && isHome) {
@@ -76,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onOpenRewards }) 
     }
   };
 
-  const isLinkActive = (link: typeof navLinks[0]) => {
+  const isLinkActive = (link: { pagePath: string; isDropdown?: boolean }) => {
     if (link.pagePath === '/') {
       return location.pathname === '/';
     }
@@ -84,7 +94,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onOpenRewards }) 
       return location.pathname.startsWith('/gallery');
     }
     if (link.pagePath === '/about') {
-      return location.pathname === '/about' || location.pathname.startsWith('/artists');
+      return location.pathname === '/about';
     }
     return location.pathname === link.pagePath;
   };
@@ -97,15 +107,20 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onOpenRewards }) 
           : 'bg-[#090A0D]/90 backdrop-blur-sm border-b border-white/[0.05]'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-        {/* Left: Phoenix Studio Logo */}
-        <Link to="/" className="flex items-center gap-3 shrink-0 group">
-          <PhoenixLogo size={42} className="transition-transform duration-200 group-hover:scale-105" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-4">
+        {/* Left: Phoenix Studio Logo - Responsively scaled for mobile */}
+        <Link to="/" className="flex items-center gap-2 sm:gap-3 shrink-0 group">
+          <div className="sm:hidden">
+            <PhoenixLogo size={32} className="transition-transform duration-200 group-hover:scale-105" />
+          </div>
+          <div className="hidden sm:block">
+            <PhoenixLogo size={42} className="transition-transform duration-200 group-hover:scale-105" />
+          </div>
           <div className="flex flex-col">
-            <span className="font-serif font-bold text-white tracking-wider text-base sm:text-lg group-hover:text-[#FFD60A] transition-colors leading-tight">
+            <span className="font-serif font-bold text-white tracking-wide text-xs sm:text-lg group-hover:text-[#FFD60A] transition-colors leading-tight">
               Phoenix Tattooz
             </span>
-            <span className="text-[10px] tracking-[0.2em] uppercase text-zinc-400 font-medium">
+            <span className="text-[8px] sm:text-[10px] tracking-wider sm:tracking-[0.2em] uppercase text-zinc-400 font-medium">
               Studio &amp; Academy
             </span>
           </div>
@@ -290,17 +305,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onOpenRewards }) 
         </div>
 
         {/* Mobile Header Controls */}
-        <div className="flex items-center gap-2 lg:hidden">
-          {/* Quick Book Button */}
+        <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden">
+          {/* Quick Book Button - Compact size */}
           <button
             onClick={() => onOpenBooking()}
-            className="h-9 px-3 rounded-lg bg-[#FFD60A] hover:bg-[#ffe033] hover:scale-105 text-black font-extrabold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all duration-200"
+            className="h-8 px-2.5 rounded-lg bg-[#FFD60A] hover:bg-[#ffe033] hover:scale-105 active:scale-95 text-black font-extrabold text-[11px] flex items-center gap-1 shadow-sm transition-all duration-200 cursor-pointer"
           >
-            <Calendar className="w-3.5 h-3.5 stroke-[2.5]" />
+            <Calendar className="w-3 h-3 stroke-[2.5]" />
             <span>Book</span>
           </button>
 
-          {/* Quick Mobile Login Button with 15% badge */}
+          {/* Quick Mobile User Photo / Avatar Icon Button (No 'Login' text on mobile) */}
           {isAuthenticated && user ? (
             <button
               onClick={() => {
@@ -310,24 +325,28 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onOpenRewards }) 
                   if (elem) elem.scrollIntoView({ behavior: 'smooth' });
                 }
               }}
-              className="h-9 px-2.5 rounded-lg bg-[#14161C] border border-white/10 text-white text-xs flex items-center gap-1.5"
+              className="w-8 h-8 rounded-full bg-[#14161C] border border-[#FFD60A]/50 text-white flex items-center justify-center p-0.5 hover:scale-105 active:scale-95 transition-all shadow-sm cursor-pointer"
+              title={user.name || 'Member Account'}
+              aria-label="Member Account"
             >
-              <div className="w-4 h-4 rounded-full bg-[#FFD60A] text-black font-bold flex items-center justify-center text-[9px]">
+              <div className="w-full h-full rounded-full bg-gradient-to-tr from-[#FFD60A] to-amber-300 text-black font-bold flex items-center justify-center text-xs shadow-inner">
                 {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
-              <span className="text-[11px] truncate max-w-[60px]">{user.name.split(' ')[0]}</span>
             </button>
           ) : (
             <div className="relative">
-              <span className="absolute -top-2 -right-1 bg-amber-400 text-black text-[8px] font-black px-1 rounded-full pointer-events-none">
+              <span className="absolute -top-1.5 -right-1 z-10 bg-gradient-to-r from-amber-400 to-[#FFD60A] text-black text-[7.5px] font-black px-1 rounded-full shadow pointer-events-none">
                 15%
               </span>
               <button
                 onClick={() => triggerAuthModal({ mode: 'signin', title: 'Member Login', subtitle: 'Sign in to unlock your 15% reward voucher.' })}
-                className="h-9 px-2.5 rounded-lg bg-[#14161C] border border-white/10 text-white text-xs font-semibold flex items-center gap-1"
+                className="w-8 h-8 rounded-full bg-[#14161C] border border-white/15 hover:border-amber-400/60 text-zinc-300 hover:text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-sm cursor-pointer"
+                title="Member Sign In"
+                aria-label="Member Sign In"
               >
-                <User className="w-3.5 h-3.5 text-[#FFD60A]" />
-                <span>Login</span>
+                <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-[#FFD60A]">
+                  <User className="w-3.5 h-3.5" />
+                </div>
               </button>
             </div>
           )}
@@ -335,47 +354,19 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onOpenRewards }) 
           {/* Hamburger Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white transition-colors"
+            className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5 text-[#FFD60A]" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-4 h-4 text-[#FFD60A]" /> : <Menu className="w-4 h-4" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer Navigation */}
+      {/* Mobile Drawer Navigation (Gallery removed per request) */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-zinc-800 bg-[#090A0D]/98 backdrop-blur-xl px-4 py-6 space-y-3 animate-in fade-in slide-in-from-top-2 duration-150">
+        <div className="lg:hidden border-t border-zinc-800 bg-[#090A0D]/98 backdrop-blur-xl px-4 py-5 space-y-3 animate-in fade-in slide-in-from-top-2 duration-150">
           <div className="flex flex-col space-y-1">
-            {navLinks.map((link) => {
-              if (link.isDropdown) {
-                return (
-                  <div key={link.name} className="py-1">
-                    <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider px-3 block mb-1">
-                      Gallery
-                    </span>
-                    <div className="grid grid-cols-2 gap-2 px-1">
-                      <Link
-                        to="/gallery?tab=photos"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-2 p-2.5 rounded-lg bg-zinc-900/80 border border-zinc-800 text-xs text-zinc-200"
-                      >
-                        <ImageIcon className="w-4 h-4 text-[#FFD60A]" />
-                        <span>Photos</span>
-                      </Link>
-                      <Link
-                        to="/gallery?tab=videos"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-2 p-2.5 rounded-lg bg-zinc-900/80 border border-zinc-800 text-xs text-zinc-200"
-                      >
-                        <Film className="w-4 h-4 text-amber-400" />
-                        <span>Video Reels</span>
-                      </Link>
-                    </div>
-                  </div>
-                );
-              }
-
+            {mobileNavLinks.map((link) => {
               const active = isLinkActive(link);
               return (
                 <Link
@@ -401,16 +392,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onOpenRewards }) 
           <div className="pt-3 border-t border-zinc-800/80">
             {isAuthenticated && user ? (
               <div className="flex items-center justify-between p-3 bg-zinc-900 border border-zinc-800 rounded-xl">
-                <div>
-                  <div className="text-xs font-bold text-white">{user.name}</div>
-                  <div className="text-[10px] text-zinc-400">{user.email}</div>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FFD60A] to-amber-300 text-black font-bold flex items-center justify-center text-xs">
+                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-white">{user.name}</div>
+                    <div className="text-[10px] text-zinc-400">{user.email}</div>
+                  </div>
                 </div>
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
                     signOut();
                   }}
-                  className="text-xs font-semibold text-rose-400"
+                  className="text-xs font-semibold text-rose-400 hover:text-rose-300 cursor-pointer"
                 >
                   Sign Out
                 </button>
@@ -421,10 +417,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onOpenRewards }) 
                   setMobileMenuOpen(false);
                   triggerAuthModal({ mode: 'signin', title: 'Member Login', subtitle: 'Sign in for your 15% instant discount voucher' });
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#14161C] border border-amber-500/30 text-xs font-semibold text-white hover:bg-zinc-800"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#14161C] border border-amber-500/30 text-xs font-semibold text-white hover:bg-zinc-800 cursor-pointer"
               >
                 <User className="w-4 h-4 text-[#FFD60A]" />
-                <span>Login / Sign Up &bull; <strong className="text-[#FFD60A]">15% Off</strong></span>
+                <span>Member Login &bull; <strong className="text-[#FFD60A]">15% Off</strong></span>
               </button>
             )}
           </div>
