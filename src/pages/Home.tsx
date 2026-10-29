@@ -132,70 +132,91 @@ export const Home: React.FC<HomeProps> = ({ onOpenBooking }) => {
           </div>
         )}
 
-        {/* Ambient subtle warm glow */}
-        <div className="absolute inset-0 bg-radial-[circle_at_50%_40%,rgba(229,184,66,0.06),transparent_65%] pointer-events-none z-0" />
+        {/* Ambient subtle warm glow behind card */}
+        <div className="absolute inset-0 bg-radial-[circle_at_50%_45%,rgba(229,184,66,0.12),transparent_70%] pointer-events-none z-0" />
 
-        {/* Main Hero Container */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative z-10 w-full text-center">
-          {/* Stately Headline */}
-          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight uppercase leading-[1.08] drop-shadow-md max-w-4xl mx-auto">
-            INK YOUR STORY
-          </h1>
+        {/* Main Hero Container with Curved Rectangle Layer */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10 w-full">
+          {/* Outer Ambient Glow Container matching user's blue marked layer */}
+          <div className="relative mx-auto max-w-3xl">
+            {/* Soft Ambient Golden/Amber Halo behind the card */}
+            <div className="absolute -inset-3 sm:-inset-5 rounded-[36px] sm:rounded-[44px] bg-gradient-to-b from-amber-500/25 via-yellow-500/15 to-amber-900/20 blur-2xl opacity-90 pointer-events-none" />
 
-          {/* Subtitle */}
-          <h2 className="font-serif text-lg sm:text-2xl font-bold text-amber-200/90 tracking-wide mt-3 sm:mt-4">
-            {heroSettings.studioSubheading || 'Wear Your Story, Leave the Rest Behind.'}
-          </h2>
+            {/* Curved Rectangle Card Layer (Between Video and Text) */}
+            <div className="relative rounded-[28px] sm:rounded-[36px] bg-[#121418]/92 backdrop-blur-md border border-amber-500/30 shadow-[0_20px_70px_rgba(0,0,0,0.85),0_0_60px_rgba(255,214,10,0.18)] p-6 sm:p-10 md:p-12 text-center overflow-hidden">
+              {/* Subtle top golden light rim */}
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-400/60 to-transparent pointer-events-none" />
 
-          {/* Body Narrative */}
-          <p className="text-zinc-300 text-sm sm:text-base leading-relaxed mt-4 max-w-2xl mx-auto">
-            {heroSettings.heroDescription || 'Premier custom tattoos, certified sterilization, and professional artistry in Hisar, Haryana. Where imagination transforms into timeless body art.'}
-          </p>
+              {/* Stately Headline */}
+              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase leading-[1.08] drop-shadow-md max-w-3xl mx-auto">
+                INK YOUR STORY
+              </h1>
 
-          {/* Action Row */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mt-8 max-w-md mx-auto">
-            <button
-              onClick={() => onOpenBooking()}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFD60A] hover:bg-[#ffe033] hover:scale-105 active:scale-95 text-black font-extrabold text-sm sm:text-base px-7 py-3.5 rounded-xl shadow-lg shadow-amber-500/20 hover:shadow-amber-500/35 transition-all duration-300 cursor-pointer"
-            >
-              <Calendar className="w-4 h-4 text-black stroke-[2.5]" />
-              <span>Book Appointment</span>
-            </button>
+              {/* Subtitle */}
+              <h2 className="font-serif text-base sm:text-xl font-bold text-amber-200/90 tracking-wide mt-2 sm:mt-3">
+                {heroSettings.studioSubheading || 'Phoenix Tattooz Studio & Academy'}
+              </h2>
 
-            <a
-              href="https://wa.me/919992969919"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#121418]/90 hover:bg-[#1A1D24] hover:scale-105 active:scale-95 border border-white/10 hover:border-emerald-500/50 text-white font-semibold text-sm sm:text-base px-6 py-3.5 rounded-xl transition-all duration-300 shadow-md hover:shadow-emerald-950/40"
-            >
-              <WhatsAppIcon className="w-4 h-4 text-emerald-400" />
-              <span>WhatsApp Us</span>
-            </a>
-          </div>
+              {/* Body Narrative */}
+              <p className="text-zinc-300 text-xs sm:text-sm md:text-base leading-relaxed mt-3 sm:mt-4 max-w-xl mx-auto font-light">
+                {heroSettings.heroDescription || 'Custom tattoos. Professional artistry. A space where creativity meets expression. Located in Hisar, Haryana.'}
+              </p>
 
-          {/* Clean Google Rating & 100% Sterile Verification Strip */}
-          <div className="mt-10 max-w-2xl mx-auto">
-            <div className="flex flex-wrap items-center justify-center gap-3 text-xs">
-              <a
-                href={`https://www.google.com/search?q=${encodeURIComponent('Phoenix Tattooz Studio & Academy Hisar')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#121418] border border-white/10 hover:border-amber-400/40 hover:scale-105 transition-all duration-300 text-zinc-300 hover:text-white shadow-sm"
-              >
-                <svg viewBox="0 0 24 24" className="w-4 h-4">
-                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z" />
-                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24Z" />
-                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.94 0 12s.45 3.84 1.25 5.42l4.03-3.15Z" />
-                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98Z" />
-                </svg>
-                <span className="font-bold text-white">4.9 ★</span>
-                <span className="text-zinc-400">Google Rating (500+ Reviews)</span>
-              </a>
+              {/* Subtle Divider */}
+              <div className="w-full max-w-md mx-auto h-px bg-zinc-800/80 my-6 sm:my-7" />
 
-              <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#121418] border border-white/10 hover:border-emerald-400/30 hover:scale-105 transition-all duration-300 text-zinc-300 shadow-sm">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span className="font-bold text-emerald-400">100% Sterile</span>
-                <span className="text-zinc-400">Single-Use Needles</span>
+              {/* Action Row - 3 Buttons matching mockup */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-xl mx-auto">
+                <button
+                  onClick={() => onOpenBooking()}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFD60A] hover:bg-[#ffe033] hover:scale-105 active:scale-95 text-black font-extrabold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-lg shadow-amber-500/20 hover:shadow-amber-500/35 transition-all duration-300 cursor-pointer"
+                >
+                  <Calendar className="w-4 h-4 text-black stroke-[2.5]" />
+                  <span>Book Appointment 📅</span>
+                </button>
+
+                <a
+                  href="https://wa.me/919992969919"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#181A20] hover:bg-[#20232A] hover:scale-105 active:scale-95 border border-white/10 hover:border-emerald-500/50 text-white font-semibold text-xs sm:text-sm px-5 py-3 rounded-xl transition-all duration-300 shadow-md"
+                >
+                  <WhatsAppIcon className="w-4 h-4 text-emerald-400" />
+                  <span>Book on WhatsApp</span>
+                </a>
+
+                <a
+                  href={`tel:${STUDIO_INFO.phone}`}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#181A20] hover:bg-[#20232A] hover:scale-105 active:scale-95 border border-white/10 hover:border-amber-400/40 text-white font-semibold text-xs sm:text-sm px-5 py-3 rounded-xl transition-all duration-300 shadow-md"
+                >
+                  <Phone className="w-4 h-4 text-[#FFD60A]" />
+                  <span>Book on Call</span>
+                </a>
+              </div>
+
+              {/* Clean Google Rating & 100% Sterile Verification Strip */}
+              <div className="mt-8 pt-5 border-t border-zinc-800/60 flex flex-wrap items-center justify-center gap-3 text-xs">
+                <a
+                  href={`https://www.google.com/search?q=${encodeURIComponent('Phoenix Tattooz Studio & Academy Hisar')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/10 hover:border-amber-400/40 hover:scale-105 transition-all duration-300 text-zinc-300 hover:text-white shadow-sm"
+                >
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z" />
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24Z" />
+                    <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.94 0 12s.45 3.84 1.25 5.42l4.03-3.15Z" />
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98Z" />
+                  </svg>
+                  <span className="font-bold text-white">4.9 ★</span>
+                  <span className="text-zinc-400">Google Rating (500+ Reviews)</span>
+                </a>
+
+                <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/10 hover:border-emerald-400/30 transition-all text-zinc-300 shadow-sm">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="font-bold text-emerald-400">100% Sterile</span>
+                  <span className="text-zinc-400">Single-Use Needles</span>
+                </div>
               </div>
             </div>
           </div>
@@ -241,16 +262,38 @@ export const Home: React.FC<HomeProps> = ({ onOpenBooking }) => {
                 </p>
               </div>
 
-              {/* Address */}
-              <div className="flex items-start gap-3.5 pt-2">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-[#FFD60A] shrink-0 mt-0.5">
-                  <MapPin className="w-5 h-5" />
+              {/* Two Studio Addresses */}
+              <div className="space-y-4 pt-1">
+                {/* Branch 1 */}
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-[#FFD60A] shrink-0 mt-0.5">
+                    <MapPin className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-bold text-sm text-white">Branch 1 &bull; Red Square Market</h4>
+                      <span className="text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded">Main Studio</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-zinc-300 mt-1 leading-relaxed">
+                      {STUDIO_INFO.address}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-sm text-white">Address</h4>
-                  <p className="text-xs sm:text-sm text-zinc-300 mt-1 leading-relaxed">
-                    {STUDIO_INFO.address}
-                  </p>
+
+                {/* Branch 2 (Red Accent Highlighted Location) */}
+                <div className="flex items-start gap-3.5 p-3 rounded-2xl bg-red-950/20 border border-red-500/30">
+                  <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/40 flex items-center justify-center text-red-500 shrink-0 mt-0.5 shadow-md shadow-red-900/20">
+                    <MapPin className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-bold text-sm text-white">Branch 2 &bull; Silver Square Mall</h4>
+                      <span className="text-[10px] font-bold bg-red-500 text-white px-2 py-0.5 rounded shadow-sm">📍 New Branch</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-red-100 font-medium mt-1 leading-relaxed">
+                      {STUDIO_INFO.address2}
+                    </p>
+                  </div>
                 </div>
               </div>
 

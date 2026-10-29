@@ -171,15 +171,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         
         {/* Pinned Top Header with Phoenix Emblem */}
         <div className="shrink-0 relative p-4 sm:p-5 pb-3 border-b border-zinc-800 bg-gradient-to-b from-zinc-900 to-[#0F1115] flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative p-1 rounded-full border border-amber-500/50 bg-black shadow-md shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-11 h-11 rounded-full border border-amber-400/60 bg-black flex items-center justify-center shrink-0 shadow-md aspect-square p-0.5">
               <PhoenixLogo size={36} />
             </div>
-            <div>
+            <div className="min-w-0">
               <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#FFD60A] block">
                 PHOENIX REWARDS CLUB
               </span>
-              <h3 className="text-lg sm:text-xl font-serif font-black text-white leading-tight">
+              <h3 className="text-base sm:text-xl font-serif font-black text-white leading-tight truncate">
                 {customTitle || (
                   step === 'otp'
                     ? 'Security Verification'

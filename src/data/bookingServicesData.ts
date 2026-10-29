@@ -71,6 +71,15 @@ export const TATTOO_SUB_SERVICES: TattooServiceOption[] = [
     recommendedFor: 'Prior tattoos or scar reworks'
   },
   {
+    id: 'body-piercing',
+    name: 'Studio Body Piercing',
+    subtitle: 'Sterile Single-Use & Medical Titanium',
+    description: 'Ear, nose, navel, and dermal piercing performed with sterile disposable needles and hypoallergenic jewelry.',
+    iconName: 'CircleDot',
+    startingPrice: '',
+    recommendedFor: 'Ear, Nose, Navel, Eyebrow, Lip'
+  },
+  {
     id: 'custom-tattoo',
     name: 'Custom Tattoo',
     subtitle: 'Original Concepts & Realism',

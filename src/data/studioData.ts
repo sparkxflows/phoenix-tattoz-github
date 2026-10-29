@@ -78,6 +78,21 @@ export const STUDIO_INFO = {
   displayPhone: "+91 99929 69919",
   whatsapp: "+919992969919",
   address: "2nd Floor, Red Square Market Cue-1, SCO-159, near Bikaner sweets & Pahuja bakers, Hisar, Haryana 125001",
+  address2: "Shop No. 30 (Ground Floor), Silver Square Mall, Rajguru Market, Hisar - 125001",
+  branches: [
+    {
+      id: "branch-1",
+      name: "Branch 1 (Red Square Market)",
+      address: "2nd Floor, SCO-159, Red Square Market (Near Bikaner Sweets & Pahuja Bakers), Hisar, Haryana 125001",
+      highlightColor: "amber",
+    },
+    {
+      id: "branch-2",
+      name: "Branch 2 (Silver Square Mall)",
+      address: "Shop No. 30 (Ground Floor), Silver Square Mall, Rajguru Market, Hisar - 125001",
+      highlightColor: "red",
+    }
+  ],
   hours: "Wed - Tue: 10 am - 9 pm",
   hoursFull: "10 am - 9 pm, every day",
   email: "phoenixtattoozhisar@gmail.com",

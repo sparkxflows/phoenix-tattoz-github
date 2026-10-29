@@ -17,16 +17,21 @@ export const PhoenixLogo: React.FC<LogoProps> = ({ className = '', size = 52 }) 
   if (!svgFallback) {
     return (
       <div 
-        className={`relative inline-flex items-center justify-center select-none rounded-full overflow-hidden transition-all duration-300 hover:scale-105 shadow-md shadow-black/50 ring-2 ring-[#FFD60A] bg-[#FFD60A] shrink-0 ${className}`}
+        className={`relative inline-flex items-center justify-center select-none rounded-full overflow-hidden transition-all duration-300 hover:scale-105 shadow-md shadow-black/50 ring-2 ring-[#FFD60A] bg-[#FFD60A] shrink-0 aspect-square ${className}`}
         style={{ 
           width: size, 
           height: size,
+          minWidth: size,
+          minHeight: size,
+          maxWidth: size,
+          maxHeight: size,
         }}
       >
         <img
           src={imgSrc}
           alt="Phoenix Tattooz Studio & Academy Logo"
-          className="w-full h-full object-cover rounded-full select-none"
+          className="w-full h-full object-cover rounded-full select-none block"
+          style={{ width: '100%', height: '100%', aspectRatio: '1/1' }}
           loading="eager"
           decoding="async"
           onError={() => {
@@ -44,8 +49,15 @@ export const PhoenixLogo: React.FC<LogoProps> = ({ className = '', size = 52 }) 
   // Default Fallback: Original Phoenix Tattooz Circular Seal
   return (
     <div 
-      className={`relative inline-flex items-center justify-center rounded-full select-none transition-transform duration-300 hover:scale-105 ${className}`}
-      style={{ width: size, height: size }}
+      className={`relative inline-flex items-center justify-center rounded-full select-none transition-transform duration-300 hover:scale-105 aspect-square shrink-0 ${className}`}
+      style={{ 
+        width: size, 
+        height: size,
+        minWidth: size,
+        minHeight: size,
+        maxWidth: size,
+        maxHeight: size,
+      }}
     >
       <svg
         viewBox="0 0 200 200"
