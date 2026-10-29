@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Calendar, 
@@ -8,22 +8,23 @@ import {
   MapPin, 
   Phone, 
   Clock, 
-  CheckCircle,
-  Star,
-  GraduationCap,
-  MessageCircle,
-  PenTool,
-  Heart,
-  Flame
+  CheckCircle, 
+  Star, 
+  GraduationCap, 
+  MessageCircle, 
+  PenTool, 
+  Heart, 
+  Flame 
 } from 'lucide-react';
 import { STUDIO_INFO } from '../data/studioData';
 import { useArtists, useHomeHero } from '../lib/studioContent';
 import { LightboxModal } from '../components/LightboxModal';
 import { GiftsAndRewardsSection } from '../components/GiftsAndRewardsSection';
-import { GiftRewardModal } from '../components/GiftRewardModal';
 import { StudioLegacyStrip } from '../components/StudioLegacyStrip';
 import { triggerAuthModal } from '../lib/memberAuth';
 import { WhatsAppIcon } from '../components/WhatsAppIcon';
+
+const GiftRewardModal = lazy(() => import('../components/GiftRewardModal').then(m => ({ default: m.GiftRewardModal })));
 
 interface HomeProps {
   onOpenBooking: (artistId?: string, serviceId?: string) => void;
@@ -332,22 +333,26 @@ export const Home: React.FC<HomeProps> = ({ onOpenBooking }) => {
         }}
       />
 
-      {/* Gifts & Rewards 15% Discount Modal */}
-      <GiftRewardModal
-        isOpen={rewardModalOpen}
-        onClose={() => setRewardModalOpen(false)}
-        initialTab={rewardModalTab}
-        onOpenBooking={() => onOpenBooking()}
-        onRequestAuth={(mode, title, subtitle) => {
-          setRewardModalOpen(false);
-          triggerAuthModal({
-            mode,
-            title,
-            subtitle,
-            afterTab: rewardModalTab,
-          });
-        }}
-      />
+      {/* Gifts & Rewards 15% Discount Modal (Loads on demand) */}
+      {rewardModalOpen && (
+        <Suspense fallback={null}>
+          <GiftRewardModal
+            isOpen={rewardModalOpen}
+            onClose={() => setRewardModalOpen(false)}
+            initialTab={rewardModalTab}
+            onOpenBooking={() => onOpenBooking()}
+            onRequestAuth={(mode, title, subtitle) => {
+              setRewardModalOpen(false);
+              triggerAuthModal({
+                mode,
+                title,
+                subtitle,
+                afterTab: rewardModalTab,
+              });
+            }}
+          />
+        </Suspense>
+      )}
     </div>
   );
 };

@@ -151,44 +151,98 @@ h1, h2, h3, h4, h5, h6 {
    SMOOTH UNIVERSAL INTERACTION & PERFORMANCE-TUNED ANIMATIONS
    ============================================================ */
 
-/* Universal button & interactive link transitions (GPU-composited properties only) */
+/* Main CTA and Primary Action Buttons: Keep refined interactive hover animation */
+@media (hover: hover) and (pointer: fine) {
+  button.bg-\[\#FFD60A\],
+  button[type="submit"],
+  .btn-primary,
+  .btn-main,
+  a.bg-\[\#FFD60A\],
+  .nav-pill-active {
+    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+                background-color 0.16s ease,
+                box-shadow 0.2s ease !important;
+  }
+  
+  button.bg-\[\#FFD60A\]:hover:not(:disabled),
+  button[type="submit"]:hover:not(:disabled),
+  .btn-primary:hover,
+  .btn-main:hover,
+  a.bg-\[\#FFD60A\]:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Secondary & Non-Main Links/Buttons: Minimal instant color transition without layout movement */
 button, 
-a.inline-flex, 
-a.flex,
-[role="button"] {
-  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), 
-              background-color 0.18s ease, 
-              border-color 0.18s ease, 
-              color 0.18s ease;
+a {
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Smooth micro-lift ONLY on devices with a real pointer/mouse (eliminates touch-scroll stutter) */
-@media (hover: hover) and (pointer: fine) {
-  button:hover:not(:disabled),
-  a.inline-flex:hover,
-  a.flex:hover {
-    transform: translateY(-2px);
-  }
-
-  .interactive-card:hover {
-    transform: translateY(-3px);
-  }
-}
-
-/* Lightweight tactile feedback on click/press */
-button:active:not(:disabled),
-a.inline-flex:active,
-a.flex:active {
+/* Press tactile feedback only on primary interactive buttons */
+button.bg-\[\#FFD60A\]:active:not(:disabled),
+button[type="submit"]:active:not(:disabled),
+.btn-primary:active,
+a.bg-\[\#FFD60A\]:active {
   transform: scale(0.98);
 }
 
-/* Interactive Card & Thumbnail Smooth Elevation */
-.interactive-card {
-  transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
-              border-color 0.2s ease;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+/* ============================================================
+   SMOOTH GPU-ACCELERATED MODAL & DRAWER TRANSITIONS (NEW SET OPENS)
+   ============================================================ */
+
+@keyframes smoothBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes smoothModalContentIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes smoothDrawerIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Support for Tailwind animate-in utility classes across all modals */
+.animate-in {
+  animation-duration: 0.22s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: smoothBackdropIn;
+}
+
+.zoom-in-95 {
+  animation-name: smoothModalContentIn;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+.slide-in-from-top-2 {
+  animation-name: smoothDrawerIn;
+  will-change: transform, opacity;
 }
 
 /* Hardware accelerated smooth rendering utility */

@@ -3,26 +3,31 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { MobileBottomBar } from './components/MobileBottomBar';
 import { LeftBookingLauncher } from './components/LeftBookingLauncher';
 import { ModernCtaEffects } from './components/ModernCtaEffects';
-import { BookAppointmentModal, BookingCategory } from './components/BookAppointmentModal';
-import { AuthModal } from './components/AuthModal';
-import { GiftRewardModal } from './components/GiftRewardModal';
+import type { BookingCategory } from './components/BookAppointmentModal';
 import { OPEN_AUTH_MODAL_EVENT, OpenAuthModalDetail, triggerAuthModal } from './lib/memberAuth';
 import { Home } from './pages/Home';
-import { About } from './pages/About';
-import { Artists } from './pages/Artists';
-import { ArtistDetail } from './pages/ArtistDetail';
-import { Experience } from './pages/Experience';
-import { Gallery } from './pages/Gallery';
-import { Contact } from './pages/Contact';
-import { Reviews } from './pages/Reviews';
-import { AdminPanel } from './pages/AdminPanel';
+
+// Code-split non-initial routes for instant First Contentful Paint & 90+ Lighthouse score
+const About = lazy(() => import('./pages/About').then(m => ({ default: m.About })));
+const Artists = lazy(() => import('./pages/Artists').then(m => ({ default: m.Artists })));
+const ArtistDetail = lazy(() => import('./pages/ArtistDetail').then(m => ({ default: m.ArtistDetail })));
+const Experience = lazy(() => import('./pages/Experience').then(m => ({ default: m.Experience })));
+const Gallery = lazy(() => import('./pages/Gallery').then(m => ({ default: m.Gallery })));
+const Contact = lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
+const Reviews = lazy(() => import('./pages/Reviews').then(m => ({ default: m.Reviews })));
+const AdminPanel = lazy(() => import('./pages/AdminPanel').then(m => ({ default: m.AdminPanel })));
+
+// Lazy-loaded modals: loaded on demand only when opened
+const BookAppointmentModal = lazy(() => import('./components/BookAppointmentModal').then(m => ({ default: m.BookAppointmentModal })));
+const AuthModal = lazy(() => import('./components/AuthModal').then(m => ({ default: m.AuthModal })));
+const GiftRewardModal = lazy(() => import('./components/GiftRewardModal').then(m => ({ default: m.GiftRewardModal })));
 
 const getAppBasename = () => {
   if (typeof window !== 'undefined') {
@@ -82,20 +87,22 @@ function MainLayout({ onOpenBooking, onOpenRewards }: MainLayoutProps) {
         />
       )}
 
-      {/* Dynamic Route Pages */}
+      {/* Dynamic Route Pages with Suspense */}
       <main className="flex-grow">
-        <Routes>
-          <Route path="/" element={<Home onOpenBooking={onOpenBooking} />} />
-          <Route path="/about" element={<About onOpenBooking={onOpenBooking} />} />
-          <Route path="/artists" element={<Artists onOpenBooking={onOpenBooking} />} />
-          <Route path="/artists/rohit-sharma" element={<ArtistDetail onOpenBooking={onOpenBooking} />} />
-          <Route path="/experience" element={<Experience onOpenBooking={onOpenBooking} />} />
-          <Route path="/gallery" element={<Gallery onOpenBooking={onOpenBooking} />} />
-          <Route path="/reviews" element={<Reviews onOpenBooking={onOpenBooking} />} />
-          <Route path="/contact" element={<Contact onOpenBooking={() => onOpenBooking()} />} />
-          <Route path="/admin" element={<AdminPanel />} />
-          <Route path="*" element={<Home onOpenBooking={onOpenBooking} />} />
-        </Routes>
+        <Suspense fallback={<div className="min-h-[50vh] bg-[#090A0D]" />}>
+          <Routes>
+            <Route path="/" element={<Home onOpenBooking={onOpenBooking} />} />
+            <Route path="/about" element={<About onOpenBooking={onOpenBooking} />} />
+            <Route path="/artists" element={<Artists onOpenBooking={onOpenBooking} />} />
+            <Route path="/artists/rohit-sharma" element={<ArtistDetail onOpenBooking={onOpenBooking} />} />
+            <Route path="/experience" element={<Experience onOpenBooking={onOpenBooking} />} />
+            <Route path="/gallery" element={<Gallery onOpenBooking={onOpenBooking} />} />
+            <Route path="/reviews" element={<Reviews onOpenBooking={onOpenBooking} />} />
+            <Route path="/contact" element={<Contact onOpenBooking={() => onOpenBooking()} />} />
+            <Route path="/admin" element={<AdminPanel />} />
+            <Route path="*" element={<Home onOpenBooking={onOpenBooking} />} />
+          </Routes>
+        </Suspense>
       </main>
 
       {/* Show public Footer with Admin link only when not in admin dashboard */}
@@ -202,48 +209,60 @@ export default function App() {
           onOpenRewards={handleOpenRewards} 
         />
 
-        {/* Global Appointment Booking Modal (Saves to Supabase) */}
-        <BookAppointmentModal
-          isOpen={bookingModalOpen}
-          onClose={handleCloseBooking}
-          preselectedArtistId={bookingArtistId}
-          preselectedServiceId={bookingServiceId}
-          initialCategory={bookingCategoryId}
-        />
+        {/* Global Appointment Booking Modal (Loads on demand with smooth transition) */}
+        {bookingModalOpen && (
+          <Suspense fallback={null}>
+            <BookAppointmentModal
+              isOpen={bookingModalOpen}
+              onClose={handleCloseBooking}
+              preselectedArtistId={bookingArtistId}
+              preselectedServiceId={bookingServiceId}
+              initialCategory={bookingCategoryId}
+            />
+          </Suspense>
+        )}
 
-        {/* Global Professional Member Sign Up & Sign In Modal */}
-        <AuthModal
-          isOpen={authModalOpen}
-          onClose={() => setAuthModalOpen(false)}
-          initialMode={authModalMode}
-          customTitle={authCustomTitle}
-          customSubtitle={authCustomSubtitle}
-          onSuccess={() => {
-            setAuthModalOpen(false);
-            if (afterAuthTab) {
-              setGlobalRewardsTab(afterAuthTab);
-              setGlobalRewardsOpen(true);
-              setAfterAuthTab(null);
-            }
-          }}
-        />
+        {/* Global Professional Member Sign Up & Sign In Modal (Loads on demand) */}
+        {authModalOpen && (
+          <Suspense fallback={null}>
+            <AuthModal
+              isOpen={authModalOpen}
+              onClose={() => setAuthModalOpen(false)}
+              initialMode={authModalMode}
+              customTitle={authCustomTitle}
+              customSubtitle={authCustomSubtitle}
+              onSuccess={() => {
+                setAuthModalOpen(false);
+                if (afterAuthTab) {
+                  setGlobalRewardsTab(afterAuthTab);
+                  setGlobalRewardsOpen(true);
+                  setAfterAuthTab(null);
+                }
+              }}
+            />
+          </Suspense>
+        )}
 
-        {/* Global Rewards & Gifts Modal */}
-        <GiftRewardModal
-          isOpen={globalRewardsOpen}
-          onClose={() => setGlobalRewardsOpen(false)}
-          initialTab={globalRewardsTab}
-          onOpenBooking={() => handleOpenBooking()}
-          onRequestAuth={(mode, title, subtitle) => {
-            setGlobalRewardsOpen(false);
-            triggerAuthModal({
-              mode,
-              title,
-              subtitle,
-              afterTab: globalRewardsTab,
-            });
-          }}
-        />
+        {/* Global Rewards & Gifts Modal (Loads on demand) */}
+        {globalRewardsOpen && (
+          <Suspense fallback={null}>
+            <GiftRewardModal
+              isOpen={globalRewardsOpen}
+              onClose={() => setGlobalRewardsOpen(false)}
+              initialTab={globalRewardsTab}
+              onOpenBooking={() => handleOpenBooking()}
+              onRequestAuth={(mode, title, subtitle) => {
+                setGlobalRewardsOpen(false);
+                triggerAuthModal({
+                  mode,
+                  title,
+                  subtitle,
+                  afterTab: globalRewardsTab,
+                });
+              }}
+            />
+          </Suspense>
+        )}
       </BrowserRouter>
     </ErrorBoundary>
   );
