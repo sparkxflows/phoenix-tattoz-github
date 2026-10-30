@@ -677,15 +677,17 @@ export const AdminPanel: React.FC = () => {
 
                         {/* WhatsApp Dispatch & Delete */}
                         <div className="flex items-center gap-2">
-                          <a
-                            href={`https://wa.me/${apt.client_phone.replace(/\D/g, '')}?text=${whatsappMessage}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors"
-                          >
-                            <MessageSquare className="w-3.5 h-3.5" />
-                            <span>WhatsApp Client</span>
-                          </a>
+                          {apt.client_phone && (
+                            <a
+                              href={`https://wa.me/${(apt.client_phone || '').replace(/\D/g, '')}?text=${whatsappMessage}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                              <MessageSquare className="w-3.5 h-3.5" />
+                              <span>WhatsApp Client</span>
+                            </a>
+                          )}
                           <button
                             onClick={() => handleDeleteAppointment(apt.booking_code)}
                             title="Delete booking"

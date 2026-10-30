@@ -71,10 +71,12 @@ export const AdminMembersManager: React.FC = () => {
   const filteredMembers = members.filter((m) => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return true;
-    const nameMatch = m.name?.toLowerCase().includes(q);
-    const emailMatch = m.email?.toLowerCase().includes(q);
-    const codeMatch = m.claims?.birthday?.code?.toLowerCase().includes(q) || m.claims?.referral?.code?.toLowerCase().includes(q);
-    const dobMatch = m.birthdate?.includes(q);
+    const nameMatch = (m.name || '').toLowerCase().includes(q);
+    const emailMatch = (m.email || '').toLowerCase().includes(q);
+    const bCode = (m.claims?.birthday?.code || '').toLowerCase();
+    const rCode = (m.claims?.referral?.code || '').toLowerCase();
+    const codeMatch = bCode.includes(q) || rCode.includes(q);
+    const dobMatch = (m.birthdate || '').includes(q);
     return nameMatch || emailMatch || codeMatch || dobMatch;
   });
 
