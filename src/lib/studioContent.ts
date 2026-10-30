@@ -1172,28 +1172,42 @@ const PHILOSOPHY_UPDATED_EVENT = 'phoenix_studio_philosophy_updated';
 // REVIEWS HANDLERS
 // ------------------------------------------
 
+export function sanitizeReviewList(list: any[]): CustomerReview[] {
+  if (!Array.isArray(list) || list.length === 0) return DEFAULT_CUSTOMER_REVIEWS;
+  return list.map((item, idx) => {
+    const fallbackId = `r-${idx + 1}`;
+    const match = DEFAULT_CUSTOMER_REVIEWS.find((d) => d.id === item?.id);
+    const numRating = Number(item?.rating);
+    const safeRating = Number.isFinite(numRating) ? Math.max(1, Math.min(5, Math.round(numRating))) : (match?.rating || 5);
+
+    return {
+      id: String(item?.id || match?.id || fallbackId),
+      name: String(item?.name || match?.name || 'Client'),
+      city: String(item?.city || match?.city || 'Hisar'),
+      rating: safeRating,
+      date: String(item?.date || match?.date || 'Recent'),
+      title: String(item?.title || item?.tattooType || match?.title || 'Exceptional Tattoo Experience'),
+      text: String(item?.text || match?.text || ''),
+      service: String(item?.service || item?.tattooType || match?.service || 'Custom Tattooing'),
+      artist: String(item?.artist || match?.artist || 'Rohit Sharma'),
+      verified: item?.verified !== undefined ? Boolean(item.verified) : (match ? match.verified : true),
+      featured: item?.featured !== undefined ? Boolean(item.featured) : (match ? match.featured : false),
+      approved: item?.approved !== undefined ? Boolean(item.approved) : true,
+      studioReply: item?.studioReply || match?.studioReply,
+      createdAt: item?.createdAt || match?.createdAt,
+      images: Array.isArray(item?.images) ? item.images : (match?.images || []),
+      videos: Array.isArray(item?.videos) ? item.videos : (match?.videos || []),
+    };
+  });
+}
+
 export function getStoredReviews(): CustomerReview[] {
   try {
     const raw = localStorage.getItem(REVIEWS_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed.map((item: CustomerReview) => {
-          const match = DEFAULT_CUSTOMER_REVIEWS.find((d) => d.id === item.id);
-          const approved = item.approved !== false;
-          if (match) {
-            return {
-              ...item,
-              approved,
-              images: item.images && item.images.length > 0 ? item.images : match.images,
-              videos: item.videos && item.videos.length > 0 ? item.videos : match.videos,
-            };
-          }
-          return {
-            ...item,
-            approved,
-          };
-        });
+        return sanitizeReviewList(parsed);
       }
     }
   } catch (e) {
@@ -1311,8 +1325,9 @@ export function useCustomerReviews(): CustomerReview[] {
           .limit(1);
 
         if (!error && data && data.length > 0 && Array.isArray(data[0].value) && data[0].value.length > 0) {
-          localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(data[0].value));
-          setReviews(data[0].value);
+          const sanitized = sanitizeReviewList(data[0].value);
+          localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(sanitized));
+          setReviews(sanitized);
         }
       } catch (e) {
         // Fallback to local
@@ -1324,7 +1339,7 @@ export function useCustomerReviews(): CustomerReview[] {
     const handleUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<CustomerReview[]>;
       if (customEvent.detail && Array.isArray(customEvent.detail)) {
-        setReviews(customEvent.detail);
+        setReviews(sanitizeReviewList(customEvent.detail));
       } else {
         setReviews(getStoredReviews());
       }

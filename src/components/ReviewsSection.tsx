@@ -50,18 +50,19 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ onOpenBooking, s
   // Only display reviews approved by admin
   const approvedReviews = reviews.filter((r) => r.approved !== false);
 
-  // Compute average rating based on approved reviews
+  // Compute average rating based on approved reviews safely
   const averageRating = (
-    approvedReviews.reduce((acc, r) => acc + r.rating, 0) / (approvedReviews.length || 1)
+    approvedReviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / (approvedReviews.length || 1)
   ).toFixed(1);
 
-  // Filter reviews
+  // Filter reviews safely
   const filteredReviews = approvedReviews.filter((r) => {
     if (serviceFilter === 'All') return true;
-    if (serviceFilter === 'Media') return (r.images && r.images.length > 0) || (r.videos && r.videos.length > 0);
-    if (serviceFilter === 'Tattoos') return r.service.includes('Tattoo') || r.service.includes('Cover');
-    if (serviceFilter === 'Cosmetic') return r.service.includes('Cosmetic') || r.service.includes('Piercing');
-    if (serviceFilter === 'Academy') return r.service.includes('Academy');
+    if (serviceFilter === 'Media') return (Array.isArray(r.images) && r.images.length > 0) || (Array.isArray(r.videos) && r.videos.length > 0);
+    const s = String(r.service || (r as any).tattooType || '').toLowerCase();
+    if (serviceFilter === 'Tattoos') return s.includes('tattoo') || s.includes('cover') || s.includes('sleeve') || s.includes('realism');
+    if (serviceFilter === 'Cosmetic') return s.includes('cosmetic') || s.includes('piercing');
+    if (serviceFilter === 'Academy') return s.includes('academy');
     return true;
   });
 
@@ -193,7 +194,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ onOpenBooking, s
                       {/* Top Bar: Stars, Date, and Media Badges */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-[#FFD60A] text-xs gap-0.5">
-                          {[...Array(rev.rating)].map((_, i) => (
+                          {[...Array(Math.max(1, Math.min(5, Math.round(Number(rev.rating) || 5))))].map((_, i) => (
                             <Star key={i} className="w-4 h-4 fill-[#FFD60A]" />
                           ))}
                         </div>
@@ -211,14 +212,14 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ onOpenBooking, s
                             </span>
                           )}
                           <span className="text-[10px] text-zinc-500 font-mono">
-                            {rev.date}
+                            {rev.date || 'Recent'}
                           </span>
                         </div>
                       </div>
 
                       {/* Review Title */}
                       <h3 className="font-serif text-base font-bold text-white group-hover:text-[#FFD60A] transition-colors leading-snug">
-                        "{rev.title}"
+                        "{rev.title || (rev as any).tattooType || 'Exceptional Tattoo Work'}"
                       </h3>
 
                       {/* Review Narrative */}
@@ -325,7 +326,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ onOpenBooking, s
                           </span>
                         </div>
                         <span className="text-[10px] text-[#FFD60A] block">
-                          {rev.service} &bull; Artist: {rev.artist}
+                          {rev.service || (rev as any).tattooType || 'Custom Tattooing'} &bull; Artist: {rev.artist || 'Rohit Sharma'}
                         </span>
                       </div>
 

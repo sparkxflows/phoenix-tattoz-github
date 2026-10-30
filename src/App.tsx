@@ -132,18 +132,41 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-[#0B0B0B] text-white flex flex-col items-center justify-center p-6 text-center">
-          <div className="max-w-md space-y-4">
+          <div className="max-w-md w-full space-y-4">
             <h2 className="text-2xl font-serif font-bold text-[#FFD60A]">Phoenix Tattooz</h2>
             <p className="text-sm text-zinc-300">An unexpected glitch occurred while loading. Please refresh to continue.</p>
-            <button 
-              onClick={() => {
-                this.setState({ hasError: false });
-                window.location.reload();
-              }}
-              className="px-6 py-2.5 bg-[#FFD60A] text-black font-bold rounded-xl text-xs hover:bg-[#ffe033] transition-colors cursor-pointer"
-            >
-              Reload Page
-            </button>
+            {this.state.error && (
+              <div className="text-left bg-zinc-900/90 border border-zinc-800 p-3.5 rounded-xl text-xs font-mono space-y-1 text-rose-300 max-h-48 overflow-auto">
+                <p className="font-bold text-rose-400">{this.state.error.name}: {this.state.error.message}</p>
+                {this.state.error.stack && (
+                  <pre className="text-[10px] text-zinc-400 whitespace-pre-wrap">{this.state.error.stack}</pre>
+                )}
+              </div>
+            )}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <button 
+                onClick={() => {
+                  this.setState({ hasError: false });
+                  window.location.reload();
+                }}
+                className="px-5 py-2.5 bg-[#FFD60A] text-black font-bold rounded-xl text-xs hover:bg-[#ffe033] transition-colors cursor-pointer"
+              >
+                Reload Page
+              </button>
+              <button 
+                onClick={() => {
+                  try {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                  } catch {}
+                  this.setState({ hasError: false });
+                  window.location.reload();
+                }}
+                className="px-5 py-2.5 bg-zinc-800 text-zinc-200 border border-zinc-700 font-bold rounded-xl text-xs hover:bg-zinc-700 transition-colors cursor-pointer"
+              >
+                Clear Cache &amp; Reload
+              </button>
+            </div>
           </div>
         </div>
       );

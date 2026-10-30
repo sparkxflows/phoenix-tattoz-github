@@ -76,10 +76,12 @@ export const Gallery: React.FC<GalleryProps> = ({ onOpenBooking }) => {
 
   const filteredPhotoItems = useMemo(() => {
     if (selectedPhotoFilter === 'All') return galleryItems;
-    return galleryItems.filter((item) =>
-      item.category.toLowerCase().includes(selectedPhotoFilter.toLowerCase()) ||
-      item.tags.some((t) => t.toLowerCase().includes(selectedPhotoFilter.toLowerCase()))
-    );
+    const filterLower = selectedPhotoFilter.toLowerCase();
+    return galleryItems.filter((item) => {
+      const cat = (item.category || '').toLowerCase();
+      const tags = Array.isArray(item.tags) ? item.tags : [];
+      return cat.includes(filterLower) || tags.some((t) => (t || '').toLowerCase().includes(filterLower));
+    });
   }, [galleryItems, selectedPhotoFilter]);
 
   // ------------------------------------------
@@ -100,12 +102,17 @@ export const Gallery: React.FC<GalleryProps> = ({ onOpenBooking }) => {
   const filteredVideoItems = useMemo(() => {
     if (selectedVideoFilter === 'All') return videoItems;
     const filterLower = selectedVideoFilter.toLowerCase();
-    return videoItems.filter((video) =>
-      video.category.toLowerCase().includes(filterLower) ||
-      filterLower.includes(video.category.toLowerCase()) ||
-      video.artist.toLowerCase().includes(filterLower) ||
-      video.tags.some((t) => t.toLowerCase().includes(filterLower))
-    );
+    return videoItems.filter((video) => {
+      const cat = (video.category || '').toLowerCase();
+      const artist = (video.artist || '').toLowerCase();
+      const tags = Array.isArray(video.tags) ? video.tags : [];
+      return (
+        cat.includes(filterLower) ||
+        filterLower.includes(cat) ||
+        artist.includes(filterLower) ||
+        tags.some((t) => (t || '').toLowerCase().includes(filterLower))
+      );
+    });
   }, [videoItems, selectedVideoFilter]);
 
   return (

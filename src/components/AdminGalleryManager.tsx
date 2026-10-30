@@ -86,16 +86,21 @@ export const AdminGalleryManager: React.FC = () => {
   // Filtered gallery items
   const filteredItems = useMemo(() => {
     return galleryItems.filter((item) => {
+      const cat = (item.category || '').toLowerCase();
       const matchesCategory =
         categoryFilter === 'All' ||
-        item.category.toLowerCase() === categoryFilter.toLowerCase();
+        cat === categoryFilter.toLowerCase();
       const q = searchQuery.toLowerCase();
+      const title = (item.title || '').toLowerCase();
+      const artist = (item.artist || '').toLowerCase();
+      const desc = (item.description || '').toLowerCase();
+      const tags = Array.isArray(item.tags) ? item.tags : [];
       const matchesSearch =
         !q ||
-        item.title.toLowerCase().includes(q) ||
-        item.artist.toLowerCase().includes(q) ||
-        item.description.toLowerCase().includes(q) ||
-        item.tags.some((t) => t.toLowerCase().includes(q));
+        title.includes(q) ||
+        artist.includes(q) ||
+        desc.includes(q) ||
+        tags.some((t) => (t || '').toLowerCase().includes(q));
 
       return matchesCategory && matchesSearch;
     });

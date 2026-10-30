@@ -1082,7 +1082,7 @@ export const AdminReviewsManager: React.FC = () => {
                           </span>
                           <span className="text-xs text-zinc-400">({rev.city})</span>
                           <div className="flex text-[#FFD60A] text-xs">
-                            {[...Array(rev.rating)].map((_, i) => (
+                            {[...Array(Math.max(1, Math.min(5, Math.round(Number(rev.rating) || 5))))].map((_, i) => (
                               <Star key={i} className="w-3.5 h-3.5 fill-[#FFD60A]" />
                             ))}
                           </div>
@@ -1094,7 +1094,7 @@ export const AdminReviewsManager: React.FC = () => {
                           )}
                         </div>
                         <span className="text-[11px] text-zinc-500 block mt-0.5">
-                          {rev.service} &bull; Artist: <strong className="text-zinc-300">{rev.artist}</strong> &bull; {rev.date}
+                          {rev.service || (rev as any).tattooType || 'Custom Tattooing'} &bull; Artist: <strong className="text-zinc-300">{rev.artist || 'Rohit Sharma'}</strong> &bull; {rev.date || 'Recent'}
                         </span>
                       </div>
 

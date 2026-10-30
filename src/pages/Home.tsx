@@ -41,21 +41,21 @@ export const Home: React.FC<HomeProps> = ({ onOpenBooking }) => {
   const LOCAL_VIDEO_URL = '/uploads/studio_bg_video.mp4';
 
   const [activeVideoSrc, setActiveVideoSrc] = useState<string>(() => {
-    if (heroSettings.bgVideoUrl && !heroSettings.bgVideoUrl.includes('1793020241737')) {
+    if (typeof heroSettings?.bgVideoUrl === 'string' && !heroSettings.bgVideoUrl.includes('1793020241737')) {
       return heroSettings.bgVideoUrl;
     }
     return PRIMARY_VIDEO_URL;
   });
 
   useEffect(() => {
-    if (heroSettings.bgVideoUrl) {
+    if (typeof heroSettings?.bgVideoUrl === 'string') {
       if (heroSettings.bgVideoUrl.includes('1793020241737')) {
         setActiveVideoSrc(PRIMARY_VIDEO_URL);
       } else {
         setActiveVideoSrc(heroSettings.bgVideoUrl);
       }
     }
-  }, [heroSettings.bgVideoUrl]);
+  }, [heroSettings?.bgVideoUrl]);
 
   useEffect(() => {
     const video = videoRef.current;

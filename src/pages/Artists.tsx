@@ -28,9 +28,10 @@ export const Artists: React.FC<ArtistsProps> = ({ onOpenBooking }) => {
 
   const filteredArtists = useMemo(() => {
     if (activeCategory === 'All') return artists;
+    const catLower = (activeCategory || '').toLowerCase();
     return artists.filter((artist) =>
       (artist.specialties || []).some(
-        (s) => s.toLowerCase().includes(activeCategory.toLowerCase())
+        (s) => (s || '').toLowerCase().includes(catLower)
       )
     );
   }, [artists, activeCategory]);

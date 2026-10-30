@@ -20,9 +20,9 @@ const getEnvVar = (name: string, fallback: string): string => {
 // Nothing secret is ever hardcoded here: the project URL and the *publishable*
 // (anon) key are injected at build time from VITE_* variables.
 // ---------------------------------------------------------------------------
-const RAW_URL = getEnvVar('VITE_SUPABASE_URL', '').trim();
-const RAW_KEY = getEnvVar('VITE_SUPABASE_ANON_KEY', '').trim();
-const REMOTE_REQUESTED = getEnvVar('VITE_USE_REMOTE_SUPABASE', 'false').trim() === 'true';
+const RAW_URL = getEnvVar('VITE_SUPABASE_URL', 'https://hadecaexijgjjzsweyuu.supabase.co').trim();
+const RAW_KEY = getEnvVar('VITE_SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhZGVjYWV4aWpnamp6c3dleXV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyMDQ1NTcsImV4cCI6MjEwODc4MDU1N30.fVebR00XLhQYMNTqYq1LUdCvOmvsMINPgQO3O__9p6Y').trim();
+const REMOTE_REQUESTED = getEnvVar('VITE_USE_REMOTE_SUPABASE', 'true').trim() === 'true';
 
 const URL_LOOKS_VALID = /^https?:\/\/[^\s]+$/.test(RAW_URL) && !/YOUR-|YOUR_|xxxx/i.test(RAW_URL);
 const KEY_LOOKS_VALID = RAW_KEY.length > 20 && !/YOUR-|YOUR_|xxxx|missing/i.test(RAW_KEY);
