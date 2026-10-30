@@ -104,7 +104,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenBooking }) => {
       {/* 1. HERO SECTION */}
       <section 
         id="hero"
-        className="relative overflow-hidden bg-[#090A0D] border-b border-white/[0.08] min-h-[640px] md:min-h-[760px] flex items-center justify-center"
+        className="relative overflow-hidden bg-[#090A0D] border-b border-white/[0.08] min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] min-h-[calc(100dvh-4rem)] sm:min-h-[calc(100dvh-5rem)] flex items-center justify-center py-6 sm:py-8 md:py-10"
       >
         {/* Layer 0: Full-Cover Looping Background Video */}
         {heroSettings.bgMediaType !== 'image' && activeVideoSrc && (
@@ -137,7 +137,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenBooking }) => {
         <div className="absolute inset-0 bg-radial-[circle_at_50%_45%,rgba(229,184,66,0.12),transparent_70%] pointer-events-none z-0" />
 
         {/* Main Hero Container with Curved Layer & Floating Trust Badges */}
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 lg:py-20 relative z-10 w-full">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 relative z-10 w-full">
           {/* Outer Ambient Glow Container matching user's blue marked layer */}
           <div className="relative mx-auto max-w-5xl">
             {/* Soft Ambient Golden/Amber Halo behind both the card and badges */}
