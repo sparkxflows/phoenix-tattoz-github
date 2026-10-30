@@ -101,38 +101,38 @@ export const Contact: React.FC<ContactProps> = ({ onOpenBooking }) => {
             <div className="space-y-6">
               {/* Studio Locations: Both Branches */}
               <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#FFD60A]/15 border border-[#FFD60A]/30 flex items-center justify-center shrink-0 text-[#FFD60A]">
+                {/* Branch 1 - Highlighted Main Branch in Yellow */}
+                <div className="flex items-start gap-4 p-3.5 rounded-2xl bg-amber-500/10 border border-[#FFD60A]/40 shadow-sm">
+                  <div className="w-12 h-12 rounded-xl bg-[#FFD60A]/20 border border-[#FFD60A]/40 flex items-center justify-center shrink-0 text-[#FFD60A]">
                     <MapPin className="w-6 h-6" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-serif font-bold text-lg text-white">Branch 1 &bull; Red Square Market</h3>
-                      <span className="text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded">Main Studio</span>
+                      <h3 className="font-serif font-bold text-lg text-[#FFD60A]">Branch 1 &bull; Red Square Market</h3>
+                      <span className="text-[10px] font-bold bg-[#FFD60A] text-black px-2 py-0.5 rounded shadow-sm">Main Branch</span>
                     </div>
-                    <p className="text-sm text-zinc-300 mt-1 leading-relaxed">
+                    <p className="text-sm text-zinc-200 mt-1 leading-relaxed">
                       {STUDIO_INFO.address}
                     </p>
-                    <p className="text-xs text-zinc-500 mt-1 font-medium">
+                    <p className="text-xs text-amber-200/60 mt-1 font-medium">
                       Landmarks: Above SCO-159 &bull; Near Bikaner Sweets &amp; Pahuja Bakers
                     </p>
                   </div>
                 </div>
 
-                {/* Branch 2 - Red Accent Highlight */}
-                <div className="flex items-start gap-4 p-3.5 rounded-2xl bg-red-950/25 border border-red-500/35">
-                  <div className="w-12 h-12 rounded-xl bg-red-500/20 border border-red-500/40 flex items-center justify-center shrink-0 text-red-500 shadow-md shadow-red-950/40">
+                {/* Branch 2 - Plain and clean in White */}
+                <div className="flex items-start gap-4 pt-1">
+                  <div className="w-12 h-12 rounded-xl bg-zinc-800/70 border border-zinc-700/60 flex items-center justify-center shrink-0 text-white">
                     <MapPin className="w-6 h-6" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-serif font-bold text-lg text-white">Branch 2 &bull; Silver Square Mall</h3>
-                      <span className="text-[10px] font-bold bg-red-500 text-white px-2 py-0.5 rounded shadow">📍 New Branch</span>
                     </div>
-                    <p className="text-sm text-red-100 font-medium mt-1 leading-relaxed">
+                    <p className="text-sm text-zinc-300 mt-1 leading-relaxed">
                       {STUDIO_INFO.address2}
                     </p>
-                    <p className="text-xs text-red-300/80 mt-1 font-medium">
+                    <p className="text-xs text-zinc-500 mt-1 font-medium">
                       Landmarks: Ground Floor, Shop 30 &bull; Rajguru Market Central
                     </p>
                   </div>

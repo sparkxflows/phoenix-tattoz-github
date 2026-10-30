@@ -536,8 +536,8 @@ export const BookAppointmentModal: React.FC<BookAppointmentModalProps> = ({
               <div className="flex items-start gap-2 pt-2 border-t border-zinc-800/80 text-zinc-400 text-xs">
                 <MapPin className="w-4 h-4 text-[#FFD60A] shrink-0 mt-0.5" />
                 <div className="space-y-0.5 text-[11px] leading-snug">
-                  <div><span className="text-zinc-300 font-medium">Branch 1:</span> {STUDIO_INFO.address}</div>
-                  <div className="text-red-400 font-medium"><span className="text-red-300">Branch 2:</span> {STUDIO_INFO.address2}</div>
+                  <div><span className="text-[#FFD60A] font-semibold">Branch 1 (Main Branch):</span> {STUDIO_INFO.address}</div>
+                  <div><span className="text-white font-medium">Branch 2:</span> {STUDIO_INFO.address2}</div>
                 </div>
               </div>
             </div>
@@ -588,7 +588,6 @@ export const BookAppointmentModal: React.FC<BookAppointmentModalProps> = ({
                       const isSelected = selectedTattooService === srv.id;
                       const IconComponent = srv.id === 'custom-tattoo' ? Palette :
                                            srv.id === 'commercial-tattoo' ? Sparkles :
-                                           srv.id === 'body-piercing' ? CircleDot :
                                            srv.id === 'cosmetic-tattoo' ? Eye : Layers;
                       return (
                         <button

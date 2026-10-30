@@ -82,15 +82,17 @@ export const STUDIO_INFO = {
   branches: [
     {
       id: "branch-1",
-      name: "Branch 1 (Red Square Market)",
+      name: "Branch 1 (Main Branch - Red Square Market)",
       address: "2nd Floor, SCO-159, Red Square Market (Near Bikaner Sweets & Pahuja Bakers), Hisar, Haryana 125001",
       highlightColor: "amber",
+      isMain: true,
     },
     {
       id: "branch-2",
       name: "Branch 2 (Silver Square Mall)",
       address: "Shop No. 30 (Ground Floor), Silver Square Mall, Rajguru Market, Hisar - 125001",
-      highlightColor: "red",
+      highlightColor: "white",
+      isMain: false,
     }
   ],
   hours: "Wed - Tue: 10 am - 9 pm",
