@@ -163,7 +163,7 @@ export const BookAppointmentModal: React.FC<BookAppointmentModalProps> = ({
 
   // Selected Objects based on current Category
   const curTattooService = TATTOO_SUB_SERVICES.find(s => s.id === selectedTattooService) || TATTOO_SUB_SERVICES[0];
-  const curArtist = artists.find(a => a.id === selectedArtist) || artists[0];
+  const curArtist = (artists && artists.length > 0) ? (artists.find(a => a.id === selectedArtist) || artists[0]) : { id: 'master-artist', name: 'Master Artist', role: 'Resident Artist', image: '' };
   const curRemovalTier = REMOVAL_SIZE_TIERS.find(t => t.id === selectedRemovalTier) || REMOVAL_SIZE_TIERS[1];
   const curCourse = TRAINING_COURSES.find(c => c.id === selectedCourseId) || TRAINING_COURSES[1];
   const curPiercingArea = PIERCING_AREAS.find(p => p.id === selectedPiercingAreaId) || PIERCING_AREAS[0];

@@ -17,19 +17,36 @@ export const FeaturedArtistModal: React.FC<FeaturedArtistModalProps> = ({
   onBookAppointment,
 }) => {
   const artists = useArtists();
-  const currentArtist = artist || artists[0];
+  const currentArtist = artist || (artists && artists.length > 0 ? artists[0] : null) || {
+    id: 'rohit-sharma',
+    name: 'Rohit Sharma',
+    role: 'Lead Artist',
+    subtitle: 'CUSTOM TATTOO SPECIALIST',
+    rating: 5.0,
+    reviewCount: 240,
+    image: 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=800&q=80',
+    specialties: ['Custom Designs', 'Realism'],
+    bio: 'Professional tattoo artist.',
+    experienceYears: 5,
+    tattoosCompleted: 1000,
+    clientsCount: 500,
+    timeline: [],
+    portfolio: [],
+    socials: { instagram: '', facebook: '', youtube: '' }
+  };
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
 
-  // Gallery of photos for the artist
+  // Safe gallery of photos for the artist
+  const portfolioItems = Array.isArray(currentArtist.portfolio) ? currentArtist.portfolio : [];
   const images = [
     {
-      url: currentArtist.image,
-      caption: 'Inking in studio',
+      url: currentArtist.image || 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=800&q=80',
+      caption: currentArtist.name ? `${currentArtist.name} - Inking in studio` : 'Inking in studio',
     },
-    ...currentArtist.portfolio.map((p) => ({
+    ...portfolioItems.map((p) => ({
       url: p.image,
-      caption: p.title,
+      caption: p.title || 'Studio Artwork',
     })),
   ];
 
@@ -101,7 +118,7 @@ export const FeaturedArtistModal: React.FC<FeaturedArtistModalProps> = ({
                 {currentArtist.name}
               </h2>
               <p className="text-xs font-semibold text-zinc-600 uppercase tracking-wider mt-0.5">
-                {currentArtist.specialties.slice(0, 2).join(' | ')}
+                {(currentArtist.specialties || ['Custom Design', 'Realism']).slice(0, 2).join(' | ')}
               </p>
             </div>
 
@@ -112,10 +129,10 @@ export const FeaturedArtistModal: React.FC<FeaturedArtistModalProps> = ({
                 ))}
               </div>
               <span className="text-xs font-bold text-zinc-900">
-                {currentArtist.rating}
+                {currentArtist.rating || 5.0}
               </span>
               <span className="text-[11px] text-zinc-500">
-                ({currentArtist.reviewCount} reviews)
+                ({currentArtist.reviewCount || 0} reviews)
               </span>
             </div>
           </div>
@@ -124,8 +141,8 @@ export const FeaturedArtistModal: React.FC<FeaturedArtistModalProps> = ({
           <div className="space-y-3">
             <div className="relative rounded-xl overflow-hidden bg-black aspect-[16/10] sm:aspect-[2/1] max-h-[220px] sm:max-h-[250px] shadow-md group">
               <img
-                src={images[activeImageIndex].url}
-                alt={images[activeImageIndex].caption}
+                src={images[activeImageIndex]?.url || currentArtist.image}
+                alt={images[activeImageIndex]?.caption || currentArtist.name}
                 className="w-full h-full object-cover transition-transform duration-300"
               />
 
@@ -198,7 +215,7 @@ export const FeaturedArtistModal: React.FC<FeaturedArtistModalProps> = ({
                   Specializations:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
-                  {currentArtist.specialties.map((spec, i) => (
+                  {(currentArtist.specialties || ['Custom Design', 'Realism']).map((spec, i) => (
                     <span
                       key={i}
                       className="bg-zinc-900 text-white text-[11px] font-medium px-2.5 py-1 rounded-md"
@@ -218,7 +235,7 @@ export const FeaturedArtistModal: React.FC<FeaturedArtistModalProps> = ({
               </span>
 
               <div className="relative pl-4 space-y-2.5 before:content-[''] before:absolute before:left-1.5 before:top-1.5 before:bottom-1.5 before:w-[1.5px] before:bg-zinc-200">
-                {currentArtist.timeline.slice(0, 4).map((item, i) => (
+                {(currentArtist.timeline || []).slice(0, 4).map((item, i) => (
                   <div key={i} className="relative text-[11px]">
                     <span className="absolute -left-4 top-1 w-2 h-2 rounded-full bg-[#FFD60A] ring-2 ring-white" />
                     <div className="font-bold text-zinc-900">{item.year}</div>

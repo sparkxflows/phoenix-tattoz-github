@@ -22,6 +22,7 @@ import {
   DEFAULT_ABOUT_SETTINGS,
   uploadImageToServer
 } from '../lib/studioContent';
+import { supabase } from '../lib/supabase';
 
 // Studio photo presets for About sections
 const ABOUT_PRESETS = [
@@ -69,6 +70,34 @@ export const AdminAboutManager: React.FC = () => {
   
   const homeFileRef = useRef<HTMLInputElement>(null);
   const storyFileRef = useRef<HTMLInputElement>(null);
+
+  // Sync directly from Supabase Cloud on mount
+  useEffect(() => {
+    let isMounted = true;
+    const fetchRemote = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'custom_about_content')
+          .single();
+
+        if (!error && data && data.value && isMounted) {
+          const merged = { ...DEFAULT_ABOUT_SETTINGS, ...data.value };
+          setSettings(merged);
+          setHomeUrlInput(merged.homeAboutImage || '');
+          setStoryUrlInput(merged.aboutStoryImage || '');
+          try {
+            localStorage.setItem('phoenix_studio_about_v1', JSON.stringify(merged));
+          } catch {}
+        }
+      } catch (e) {}
+    };
+    fetchRemote();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // File upload for Home About image directly to server disk storage
   const handleHomeFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

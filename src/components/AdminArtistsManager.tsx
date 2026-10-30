@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Artist } from '../data/studioData';
 import { getStoredArtists, saveArtists, resetArtists, uploadImageToServer } from '../lib/studioContent';
+import { supabase } from '../lib/supabase';
 
 export const AdminArtistsManager: React.FC = () => {
   const [artists, setArtists] = useState<Artist[]>(getStoredArtists);
@@ -40,10 +41,32 @@ export const AdminArtistsManager: React.FC = () => {
   const portfolioFileInputRef = useRef<HTMLInputElement>(null);
   const [portfolioTargetIndex, setPortfolioTargetIndex] = useState<number | null>(null);
 
-  // Sync latest roster from server on mount
+  // Sync latest roster directly from Supabase Cloud on mount
   useEffect(() => {
     let isMounted = true;
     const loadFreshArtists = async () => {
+      // 1. Authoritative Supabase Cloud Store
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'custom_artists')
+          .single();
+
+        if (!error && data && Array.isArray(data.value) && data.value.length > 0) {
+          if (isMounted) {
+            setArtists(data.value);
+            try {
+              localStorage.setItem('phoenix_studio_artists_v1', JSON.stringify(data.value));
+            } catch {}
+          }
+          return;
+        }
+      } catch (e) {
+        // Fallback
+      }
+
+      // 2. Server fallback
       try {
         const res = await fetch('/api/content/custom_artists', { cache: 'no-store' });
         if (res.ok) {
@@ -332,7 +355,7 @@ export const AdminArtistsManager: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Hidden File Inputs */}
       <input
         ref={fileInputRef}
@@ -349,26 +372,28 @@ export const AdminArtistsManager: React.FC = () => {
         className="hidden"
       />
 
-      {/* Top Banner */}
-      <div className="bg-[#161616] border border-zinc-800 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-lg bg-[#FFD60A]/15 text-[#FFD60A]">
-              <Users className="w-5 h-5" />
-            </span>
-            <h3 className="font-serif font-bold text-xl text-white">
-              Studio Artists &amp; Bio Customization
+      {/* TOP PRIMARY ACTION BAR - Guaranteed at the very top for Mobile and Desktop */}
+      <div className="sticky top-14 z-20 bg-[#161616]/95 backdrop-blur-md border border-zinc-800 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="p-2 rounded-xl bg-[#FFD60A]/15 text-[#FFD60A] shrink-0">
+            <Users className="w-5 h-5" />
+          </span>
+          <div className="min-w-0">
+            <h3 className="font-serif font-bold text-sm sm:text-base text-white truncate">
+              Studio Artists Management
             </h3>
+            <p className="text-[11px] text-zinc-400 truncate">
+              Edits save to Supabase Cloud &amp; sync live to website
+            </p>
           </div>
-          <p className="text-xs text-zinc-400 mt-1.5 max-w-2xl leading-relaxed">
-            Customize artist profile photos, names, bios, specialties, experience timelines, stats, and portfolio pieces. Any edits sync immediately to the Meet Our Artists section, Artist Details page, and Booking dropdown.
-          </p>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
+        {/* Action Buttons: Very top of the screen */}
+        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto shrink-0">
           <button
             onClick={handleResetClick}
-            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-zinc-900 border border-zinc-800 hover:border-zinc-700 px-3.5 py-2.5 rounded-lg transition-colors cursor-pointer"
+            type="button"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 text-xs text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 px-3.5 py-2.5 rounded-xl transition-all cursor-pointer font-medium"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset Defaults</span>
@@ -377,12 +402,13 @@ export const AdminArtistsManager: React.FC = () => {
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex items-center gap-2 bg-[#FFD60A] hover:bg-[#ffe033] active:scale-[0.98] text-black font-bold text-xs px-5 py-2.5 rounded-lg shadow-md transition-all cursor-pointer disabled:opacity-50"
+            type="button"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#FFD60A] hover:bg-[#ffe033] active:scale-[0.98] text-black font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-yellow-500/10 transition-all cursor-pointer disabled:opacity-50"
           >
             {isSaving ? (
               <>
                 <RefreshCw className="w-3.5 h-3.5 animate-spin text-black" />
-                <span>Saving...</span>
+                <span>Saving to Supabase...</span>
               </>
             ) : (
               <>

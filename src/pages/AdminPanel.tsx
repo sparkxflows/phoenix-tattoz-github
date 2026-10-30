@@ -75,7 +75,7 @@ export const AdminPanel: React.FC = () => {
   const [authSubmitting, setAuthSubmitting] = useState(false);
 
   // Dashboard Data State
-  const [activeTab, setActiveTab] = useState<'appointments' | 'inquiries' | 'members' | 'hero' | 'about' | 'reviews' | 'artists' | 'gallery' | 'videos' | 'rewards' | 'database' | 'security'>('appointments');
+  const [activeTab, setActiveTab] = useState<'appointments' | 'inquiries' | 'members' | 'hero' | 'about' | 'reviews' | 'artists' | 'gallery' | 'videos' | 'rewards'>('appointments');
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -84,43 +84,6 @@ export const AdminPanel: React.FC = () => {
   const [copiedSQL, setCopiedSQL] = useState(false);
   const [actionSuccessMsg, setActionSuccessMsg] = useState('');
   const [mobileMoreDrawerOpen, setMobileMoreDrawerOpen] = useState(false);
-  // Responsive layout mode: 'auto' (automatically adjusts by screen), 'mobile' (touch phone layout), 'laptop' (wide desktop layout)
-  const [deviceMode, setDeviceMode] = useState<'auto' | 'mobile' | 'laptop'>('auto');
-  // Security & Password Change State
-  const [currentPwd, setCurrentPwd] = useState('');
-  const [newPwd, setNewPwd] = useState('');
-  const [confirmPwd, setConfirmPwd] = useState('');
-  const [pwdSuccess, setPwdSuccess] = useState('');
-  const [pwdError, setPwdError] = useState('');
-  const [isChangingPwd, setIsChangingPwd] = useState(false);
-
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPwdError('');
-    setPwdSuccess('');
-
-    if (newPwd.length < 6) {
-      setPwdError('New password must be at least 6 characters.');
-      return;
-    }
-    if (newPwd !== confirmPwd) {
-      setPwdError('New password and confirm password do not match.');
-      return;
-    }
-
-    setIsChangingPwd(true);
-    const res = await updateAdminPassword(currentPwd, newPwd);
-    setIsChangingPwd(false);
-
-    if (res.success) {
-      setPwdSuccess('Admin master password successfully updated!');
-      setCurrentPwd('');
-      setNewPwd('');
-      setConfirmPwd('');
-    } else {
-      setPwdError(res.error || 'Failed to update password.');
-    }
-  };
 
 
   // Check auth session on load
@@ -363,7 +326,7 @@ export const AdminPanel: React.FC = () => {
   // VIEW B: LOGGED IN (FULL ADMIN DASHBOARD)
   // ==========================================
   interface AdminTabItem {
-    id: 'appointments' | 'inquiries' | 'members' | 'hero' | 'about' | 'reviews' | 'artists' | 'gallery' | 'videos' | 'rewards' | 'database' | 'security';
+    id: 'appointments' | 'inquiries' | 'members' | 'hero' | 'about' | 'reviews' | 'artists' | 'gallery' | 'videos' | 'rewards';
     label: string;
     short: string;
     icon: any;
@@ -381,13 +344,11 @@ export const AdminPanel: React.FC = () => {
     { id: 'rewards', label: 'Gifts & Rewards Images', short: 'Rewards', icon: Gift },
     { id: 'hero', label: 'Home Loop Video & Hero', short: 'Hero Video', icon: Video },
     { id: 'about', label: 'About Section & Story', short: 'About Story', icon: FileText },
-    { id: 'database', label: 'Supabase Backend Config', short: 'Database', icon: Database },
-    { id: 'security', label: 'Admin Security & Password', short: 'Password', icon: Key },
   ];
 
   return (
     <div className="min-h-screen bg-[#0E0E0E] text-zinc-200">
-      {/* Top Admin Bar - Responsive for Laptop & Mobile */}
+      {/* Top Admin Bar - Clean, Fluid & Responsive */}
       <header className="sticky top-0 z-30 bg-[#141414]/95 backdrop-blur-md border-b border-zinc-800 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex items-center justify-between transition-all">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <PhoenixLogo size={38} className="shrink-0" />
@@ -404,68 +365,33 @@ export const AdminPanel: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-          {/* Go back to live side - Visible & optimized for both Mobile and Laptop */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Go back to live side */}
           <Link
             to="/"
-            className="text-[11px] sm:text-xs text-[#FFD60A] hover:text-black hover:bg-[#FFD60A] bg-amber-400/10 border border-amber-400/40 px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-lg transition-all inline-flex items-center gap-1 font-semibold shrink-0 shadow-sm"
+            className="text-[11px] sm:text-xs text-[#FFD60A] hover:text-black hover:bg-[#FFD60A] bg-amber-400/10 border border-amber-400/40 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg transition-all inline-flex items-center gap-1.5 font-semibold shrink-0 shadow-sm"
             title="Go back to live public website"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span className="hidden min-[480px]:inline">Go back to live side</span>
-            <span className="min-[480px]:hidden">Live Side</span>
+            <span className="hidden sm:inline">Go back to live side</span>
+            <span className="sm:hidden">Live Site</span>
           </Link>
 
-          {/* Responsive Layout Mode Switcher */}
-          <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-xl p-0.5 text-[10px] sm:text-xs">
-            <button
-              onClick={() => setDeviceMode('auto')}
-              className={`px-1.5 sm:px-2 py-1 rounded-lg transition-colors cursor-pointer ${
-                deviceMode === 'auto' 
-                  ? 'bg-[#FFD60A] text-black font-bold shadow-sm' 
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-              title="Auto-detect laptop vs mobile based on screen"
-            >
-              Auto
-            </button>
-            <button
-              onClick={() => setDeviceMode('mobile')}
-              className={`flex items-center gap-1 px-1.5 sm:px-2 py-1 rounded-lg transition-colors cursor-pointer ${
-                deviceMode === 'mobile' 
-                  ? 'bg-[#FFD60A] text-black font-bold shadow-sm' 
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-              title="Mobile Admin View (Touch-optimized)"
-            >
-              <Smartphone className="w-3 h-3" />
-              <span className="hidden md:inline">Mobile</span>
-            </button>
-            <button
-              onClick={() => setDeviceMode('laptop')}
-              className={`flex items-center gap-1 px-1.5 sm:px-2 py-1 rounded-lg transition-colors cursor-pointer ${
-                deviceMode === 'laptop' 
-                  ? 'bg-[#FFD60A] text-black font-bold shadow-sm' 
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-              title="Laptop Admin View (Widescreen)"
-            >
-              <Laptop className="w-3 h-3" />
-              <span className="hidden md:inline">Laptop</span>
-            </button>
-          </div>
-
+          {/* Refresh Database Button */}
           <button
             onClick={fetchData}
             title="Refresh database records"
-            className="p-1.5 sm:p-2 text-zinc-400 hover:text-white bg-zinc-900 border border-zinc-800 rounded-lg hover:border-zinc-700 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-zinc-300 hover:text-white bg-zinc-900 border border-zinc-800 rounded-lg hover:border-zinc-700 transition-colors cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${dataLoading ? 'animate-spin text-[#FFD60A]' : ''}`} />
+            <span className="hidden sm:inline">Refresh</span>
           </button>
+
+          {/* Log Out Button */}
           <button
             onClick={handleLogout}
             title="Log out of admin"
-            className="flex items-center gap-1 text-xs font-semibold bg-rose-950/40 text-rose-300 border border-rose-800/40 hover:bg-rose-900/60 px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-lg transition-colors cursor-pointer"
+            className="flex items-center gap-1 text-xs font-semibold bg-rose-950/40 text-rose-300 border border-rose-800/40 hover:bg-rose-900/60 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span className="hidden md:inline">Log Out</span>
@@ -473,25 +399,8 @@ export const AdminPanel: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Content Area - Extra bottom padding on mobile so fixed bottom dock never covers content */}
-      <main className={`${deviceMode === 'mobile' ? 'max-w-md mx-auto shadow-2xl border border-zinc-800/80 rounded-3xl p-4 my-4 bg-[#121212]' : 'max-w-7xl mx-auto'} px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-5 sm:space-y-6 pb-28 lg:pb-10 transition-all`}>
-        {/* Mobile Dedicated "Go back to live side" Quick Card */}
-        {deviceMode !== 'laptop' && (
-          <div className={`${deviceMode === 'auto' ? 'lg:hidden' : 'block'} bg-[#151515] border border-amber-400/30 rounded-xl px-3 py-2 flex items-center justify-between shadow-sm`}>
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-              <span className="text-[11px] text-zinc-300 font-medium truncate">Mobile Admin Mode</span>
-            </div>
-            <Link
-              to="/"
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#FFD60A] hover:text-white bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/40 px-2.5 py-1.5 rounded-lg transition-colors shadow-sm shrink-0"
-              title="Return to the public studio website"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Go back to live side</span>
-            </Link>
-          </div>
-        )}
+      {/* Main Content Area */}
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-5 sm:space-y-6 pb-28 lg:pb-10 transition-all">
         {actionSuccessMsg && (
           <div className="bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 px-4 py-3 rounded-xl text-xs flex items-center justify-between animate-in fade-in duration-200">
             <span className="flex items-center gap-2">
@@ -551,82 +460,31 @@ export const AdminPanel: React.FC = () => {
         {/* RESPONSIVE NAVIGATION: LAPTOP HORIZONTAL BAR + MOBILE CONTROLS */}
         {/* ============================================================== */}
 
-        {/* 1. Mobile Quick Jump Dropdown & Swipeable Ribbon (Visible on Mobile/Tablet or in Mobile Mode) */}
-        {deviceMode !== 'laptop' && (
-          <div className={`${deviceMode === 'auto' ? 'lg:hidden' : 'block'} space-y-2.5`}>
-            {/* Quick Select Menu for One-Tap Jump */}
-            <div className="relative">
-              <select
-                value={activeTab}
-                onChange={(e) => {
-                  if (e.target.value === 'live_site') {
-                    navigate('/');
-                    return;
-                  }
-                  setActiveTab(e.target.value as any);
-                }}
-                className="w-full bg-[#181818] border border-zinc-700/80 text-white font-bold text-xs rounded-xl px-3.5 py-3 appearance-none focus:outline-none focus:border-[#FFD60A] shadow-md pr-10 cursor-pointer"
-              >
-                <option value="appointments">📅 Bookings &amp; Appointments ({appointments.length})</option>
-                <option value="members">👥 Client Members &amp; Live Sign-Ins (DOB &amp; Discounts)</option>
-                <option value="inquiries">✉️ Contact Messages ({inquiries.length})</option>
-                <option value="reviews">⭐ Client Reviews &amp; Creed Moderation</option>
-                <option value="artists">👥 Manage Artists &amp; Bios</option>
-                <option value="gallery">🎨 Manage Tattoo Gallery (Photos)</option>
-                <option value="videos">🎬 Manage Video Gallery &amp; Reels</option>
-                <option value="rewards">🎁 Gifts &amp; Rewards Images (3 Tiers)</option>
-                <option value="hero">🎬 Home Section 1 Loop Video &amp; Image</option>
-                <option value="about">📄 About Section &amp; Story</option>
-                <option value="database">🗄️ Supabase Backend Config</option>
-                <option value="live_site">← Go back to live side (Public Website)</option>
-              </select>
-              <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FFD60A] pointer-events-none" />
-            </div>
-
-            {/* Swipeable Horizontal Tab Ribbon */}
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1 -mx-3 px-3">
-              {tabsList.map((tab) => {
-                const TabIcon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
-                      isActive
-                        ? 'bg-[#FFD60A] text-black shadow-md'
-                        : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
-                    }`}
-                  >
-                    <TabIcon className="w-3.5 h-3.5" />
-                    <span>{tab.short}</span>
-                    {tab.badge !== undefined && tab.badge > 0 && (
-                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                        isActive ? 'bg-black text-white' : 'bg-zinc-800 text-[#FFD60A]'
-                      }`}>
-                        {tab.badge}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-
-              {/* Small option in swipe ribbon to return to live site */}
-              <Link
-                to="/"
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap bg-amber-400/10 hover:bg-amber-400/20 text-[#FFD60A] border border-amber-400/40 transition-all shrink-0"
-                title="Go back to live side (public website)"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Go back to live side</span>
-              </Link>
-            </div>
+        {/* Navigation Tabs - Responsive: Mobile Dropdown + Fluid Tabs Ribbon */}
+        <div className="space-y-3">
+          {/* Mobile Select Menu for Fast Touch Navigation */}
+          <div className="lg:hidden relative">
+            <select
+              value={activeTab}
+              onChange={(e) => setActiveTab(e.target.value as any)}
+              className="w-full bg-[#181818] border border-zinc-700/80 text-white font-bold text-xs rounded-xl px-3.5 py-3 appearance-none focus:outline-none focus:border-[#FFD60A] shadow-md pr-10 cursor-pointer"
+            >
+              <option value="appointments">📅 Bookings &amp; Appointments ({appointments.length})</option>
+              <option value="members">👥 Client Members &amp; Live Sign-Ins</option>
+              <option value="inquiries">✉️ Contact Messages ({inquiries.length})</option>
+              <option value="reviews">⭐ Client Reviews &amp; Creed Moderation</option>
+              <option value="artists">👥 Manage Artists &amp; Bios</option>
+              <option value="gallery">🎨 Manage Tattoo Gallery (Photos)</option>
+              <option value="videos">🎬 Manage Video Gallery &amp; Reels</option>
+              <option value="rewards">🎁 Gifts &amp; Rewards Images (3 Tiers)</option>
+              <option value="hero">🎬 Home Section 1 Loop Video &amp; Image</option>
+              <option value="about">📄 About Section &amp; Story</option>
+            </select>
+            <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FFD60A] pointer-events-none" />
           </div>
-        )}
 
-        {/* 2. Laptop Full Horizontal Tab Ribbon (Visible on Laptop screens >= 1024px or in Laptop Mode) */}
-        {deviceMode !== 'mobile' && (
-          <div className={`${deviceMode === 'auto' ? 'hidden lg:flex' : 'flex'} flex-wrap items-center gap-1.5 border-b border-zinc-800 pb-3`}>
+          {/* Fluid Horizontal Tab Ribbon (Works beautifully on all screens) */}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-2 border-b border-zinc-800">
             {tabsList.map((tab) => {
               const TabIcon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -634,10 +492,10 @@ export const AdminPanel: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
                     isActive
-                      ? 'bg-[#FFD60A] text-black shadow-md'
-                      : 'bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-850'
+                      ? 'bg-[#FFD60A] text-black shadow-md font-bold'
+                      : 'bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-850 border border-zinc-800'
                   }`}
                 >
                   <TabIcon className="w-3.5 h-3.5" />
@@ -653,7 +511,7 @@ export const AdminPanel: React.FC = () => {
               );
             })}
           </div>
-        )}
+        </div>
 
         {/* ============================================================== */}
         {/* TAB 1: APPOINTMENTS */}
@@ -968,269 +826,102 @@ export const AdminPanel: React.FC = () => {
           </div>
         )}
 
-        {/* ============================================================== */}
-        {/* TAB 4: SUPABASE CONFIG & SQL SETUP */}
-        {/* ============================================================== */}
-        {activeTab === 'database' && (
-          <div className="space-y-5">
-            <div className="bg-[#161616] border border-zinc-800 p-6 rounded-2xl space-y-5">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-serif font-bold text-xl text-white flex items-center gap-2">
-                    <Database className="w-5 h-5 text-[#FFD60A]" />
-                    <span>Supabase Database &amp; SQL Query Setup</span>
-                  </h3>
-                  <p className="text-xs text-zinc-400 mt-1">
-                    Direct integration for Appointments, Inquiries, Dynamic Artists, Gallery, and 15% Rewards Club.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={copySQL}
-                    className="bg-[#FFD60A] hover:bg-yellow-400 text-black font-extrabold text-xs px-4 py-2.5 rounded-xl flex items-center gap-1.5 transition-all shadow-md shadow-amber-500/10 cursor-pointer active:scale-95"
-                  >
-                    <Copy className="w-4 h-4" />
-                    <span>{copiedSQL ? 'Copied to Clipboard! ✓' : 'Copy All SQL Queries'}</span>
-                  </button>
-                  <a
-                    href={supabaseDashboardUrl('/sql/new')}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="bg-zinc-800 hover:bg-zinc-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl flex items-center gap-1.5 transition-colors border border-zinc-700"
-                  >
-                    <span>Open Supabase SQL Editor</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-[#FFD60A]" />
-                  </a>
-                </div>
-              </div>
-
-              {/* Instructions banner */}
-              <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-xs text-amber-200/90 space-y-1.5">
-                <span className="font-bold text-[#FFD60A] text-sm block">
-                  Quick Supabase Setup Guide (3 Steps):
-                </span>
-                <ol className="list-decimal list-inside space-y-1 text-zinc-300">
-                  <li>Click <strong>"Copy All SQL Queries"</strong> button above.</li>
-                  <li>Go to your Supabase Dashboard &rarr; <strong>SQL Editor</strong> &rarr; <strong>New query</strong>.</li>
-                  <li>Paste and click <strong>Run</strong>. All tables (<code className="text-[#FFD60A]">appointments</code>, <code className="text-[#FFD60A]">contact_inquiries</code>, <code className="text-[#FFD60A]">site_settings</code>, <code className="text-[#FFD60A]">member_users</code>, <code className="text-[#FFD60A]">admin_users</code>) will be created immediately with safe RLS permissions and realtime updates!</li>
-                </ol>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-zinc-900/90 p-4 rounded-xl border border-zinc-800">
-                <div>
-                  <span className="text-zinc-500 block text-[10px] uppercase font-bold">Supabase REST Endpoint</span>
-                  <span className="font-mono text-zinc-300 text-[11px] truncate block mt-0.5">{SUPABASE_URL || 'Using Local/API Store (Configure in .env for Remote)'}</span>
-                </div>
-                <div>
-                  <span className="text-zinc-500 block text-[10px] uppercase font-bold">Realtime Live Sync</span>
-                  <span className="font-semibold text-emerald-400 mt-0.5 block">Active for Bookings, Artists &amp; Gallery</span>
-                </div>
-              </div>
-
-              <div className="relative rounded-xl overflow-hidden border border-zinc-800 bg-black">
-                <div className="p-3 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between text-xs text-zinc-400">
-                  <span className="font-mono">supabase-schema.sql</span>
-                  <button
-                    onClick={copySQL}
-                    className="text-[#FFD60A] font-bold hover:underline cursor-pointer flex items-center gap-1"
-                  >
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy</span>
-                  </button>
-                </div>
-                <pre className="p-4 text-xs font-mono text-zinc-300 overflow-x-auto leading-relaxed max-h-[380px] scrollbar-thin">
-                  {SUPABASE_SQL_SCHEMA}
-                  {'\n\n'}
-                  {ADMIN_SETUP_SQL}
-                </pre>
-              </div>
-            </div>
-          </div>
-        )}
-        {/* ============================================================== */}
-        {/* TAB 12: ADMIN SECURITY & PASSWORD */}
-        {/* ============================================================== */}
-        {activeTab === 'security' && (
-          <div className="max-w-xl mx-auto bg-[#161616] border border-zinc-800 rounded-2xl p-6 sm:p-8 space-y-6">
-            <div>
-              <h3 className="font-serif font-bold text-xl text-white flex items-center gap-2">
-                <Key className="w-5 h-5 text-[#FFD60A]" />
-                <span>Change Admin Password</span>
-              </h3>
-              <p className="text-xs text-zinc-400 mt-1">
-                Update your administrative master password for Phoenix Tattooz.
-              </p>
-            </div>
-
-            {pwdSuccess && (
-              <div className="p-3.5 bg-emerald-950/60 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>{pwdSuccess}</span>
-              </div>
-            )}
-
-            {pwdError && (
-              <div className="p-3.5 bg-rose-950/60 border border-rose-500/30 rounded-xl text-xs text-rose-300 flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
-                <span>{pwdError}</span>
-              </div>
-            )}
-
-            <form onSubmit={handlePasswordChange} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
-                  Current Password *
-                </label>
-                <input
-                  type="password"
-                  placeholder="Placeholder for Current Password"
-                  value={currentPwd}
-                  onChange={(e) => setCurrentPwd(e.target.value)}
-                  className="w-full bg-[#0D0E12] border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#FFD60A]"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
-                  New Password (minimum 6 characters) *
-                </label>
-                <input
-                  type="password"
-                  placeholder="Placeholder for New Password"
-                  value={newPwd}
-                  onChange={(e) => setNewPwd(e.target.value)}
-                  className="w-full bg-[#0D0E12] border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#FFD60A]"
-                  required
-                  minLength={6}
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
-                  Confirm New Password *
-                </label>
-                <input
-                  type="password"
-                  placeholder="Placeholder for Confirming New Password"
-                  value={confirmPwd}
-                  onChange={(e) => setConfirmPwd(e.target.value)}
-                  className="w-full bg-[#0D0E12] border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#FFD60A]"
-                  required
-                  minLength={6}
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isChangingPwd}
-                className="w-full py-3 rounded-xl bg-[#FFD60A] hover:bg-[#ffe033] text-black font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md shadow-amber-500/20"
-              >
-                <Key className="w-4 h-4" />
-                <span>{isChangingPwd ? 'Updating Password...' : 'Update Admin Password'}</span>
-              </button>
-            </form>
-          </div>
-        )}
       </main>
 
-      {/* Mobile Admin Bottom Dock (Visible on mobile/tablet or in Mobile Mode) */}
-      {deviceMode !== 'laptop' && (
-        <nav
-          aria-label="Mobile Admin Navigation"
-          className={`${deviceMode === 'auto' ? 'lg:hidden' : 'block'} fixed bottom-0 left-0 right-0 z-40 bg-[#121212]/95 backdrop-blur-xl border-t border-zinc-800 px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(0,0,0,0.7)]`}
-        >
-          <div className="flex items-center justify-around max-w-lg mx-auto">
-            {/* Bookings */}
-            <button
-              onClick={() => setActiveTab('appointments')}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer ${
-                activeTab === 'appointments'
-                  ? 'text-[#FFD60A] font-bold scale-105'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              <div className="relative">
-                <Calendar className="w-5 h-5 mb-0.5" />
-                {appointments.length > 0 && (
-                  <span className="absolute -top-1 -right-2 bg-[#FFD60A] text-black font-extrabold text-[9px] px-1 rounded-full">
-                    {appointments.length}
-                  </span>
-                )}
-              </div>
-              <span className="text-[10px]">Bookings</span>
-            </button>
+      {/* Mobile Admin Bottom Dock (Visible on Mobile/Tablet screens < 1024px) */}
+      <nav
+        aria-label="Mobile Admin Navigation"
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#121212]/95 backdrop-blur-xl border-t border-zinc-800 px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(0,0,0,0.7)]"
+      >
+        <div className="flex items-center justify-around max-w-lg mx-auto">
+          {/* Bookings */}
+          <button
+            onClick={() => setActiveTab('appointments')}
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer ${
+              activeTab === 'appointments'
+                ? 'text-[#FFD60A] font-bold scale-105'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <div className="relative">
+              <Calendar className="w-5 h-5 mb-0.5" />
+              {appointments.length > 0 && (
+                <span className="absolute -top-1 -right-2 bg-[#FFD60A] text-black font-extrabold text-[9px] px-1 rounded-full">
+                  {appointments.length}
+                </span>
+              )}
+            </div>
+            <span className="text-[10px]">Bookings</span>
+          </button>
 
-            {/* Reviews */}
-            <button
-              onClick={() => setActiveTab('reviews')}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer ${
-                activeTab === 'reviews'
-                  ? 'text-[#FFD60A] font-bold scale-105'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              <Star className={`w-5 h-5 mb-0.5 ${activeTab === 'reviews' ? 'fill-[#FFD60A]' : ''}`} />
-              <span className="text-[10px]">Reviews</span>
-            </button>
+          {/* Reviews */}
+          <button
+            onClick={() => setActiveTab('reviews')}
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer ${
+              activeTab === 'reviews'
+                ? 'text-[#FFD60A] font-bold scale-105'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <Star className={`w-5 h-5 mb-0.5 ${activeTab === 'reviews' ? 'fill-[#FFD60A]' : ''}`} />
+            <span className="text-[10px]">Reviews</span>
+          </button>
 
-            {/* Artists */}
-            <button
-              onClick={() => setActiveTab('artists')}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer ${
-                activeTab === 'artists'
-                  ? 'text-[#FFD60A] font-bold scale-105'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              <Users className="w-5 h-5 mb-0.5" />
-              <span className="text-[10px]">Artists</span>
-            </button>
+          {/* Artists */}
+          <button
+            onClick={() => setActiveTab('artists')}
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer ${
+              activeTab === 'artists'
+                ? 'text-[#FFD60A] font-bold scale-105'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <Users className="w-5 h-5 mb-0.5" />
+            <span className="text-[10px]">Artists</span>
+          </button>
 
-            {/* Gallery */}
-            <button
-              onClick={() => setActiveTab('gallery')}
-              className={`flex flex-col items-center justify-center py-1 px-1.5 rounded-xl transition-all cursor-pointer ${
-                activeTab === 'gallery'
-                  ? 'text-[#FFD60A] font-bold scale-105'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              <Palette className="w-5 h-5 mb-0.5" />
-              <span className="text-[10px]">Gallery</span>
-            </button>
+          {/* Gallery */}
+          <button
+            onClick={() => setActiveTab('gallery')}
+            className={`flex flex-col items-center justify-center py-1 px-1.5 rounded-xl transition-all cursor-pointer ${
+              activeTab === 'gallery'
+                ? 'text-[#FFD60A] font-bold scale-105'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <Palette className="w-5 h-5 mb-0.5" />
+            <span className="text-[10px]">Gallery</span>
+          </button>
 
-            {/* Live Site (Return to Public Website) */}
-            <Link
-              to="/"
-              className="flex flex-col items-center justify-center py-1 px-1.5 rounded-xl transition-all text-[#FFD60A] hover:text-white cursor-pointer active:scale-95"
-              title="Go back to live public website"
-            >
-              <ArrowLeft className="w-5 h-5 mb-0.5 text-[#FFD60A]" />
-              <span className="text-[10px] font-bold text-[#FFD60A] whitespace-nowrap">Live Side</span>
-            </Link>
+          {/* Live Site (Return to Public Website) */}
+          <Link
+            to="/"
+            className="flex flex-col items-center justify-center py-1 px-1.5 rounded-xl transition-all text-[#FFD60A] hover:text-white cursor-pointer active:scale-95"
+            title="Go back to live public website"
+          >
+            <ArrowLeft className="w-5 h-5 mb-0.5 text-[#FFD60A]" />
+            <span className="text-[10px] font-bold text-[#FFD60A] whitespace-nowrap">Live Side</span>
+          </Link>
 
-            {/* More Tools Drawer Button */}
-            <button
-              onClick={() => setMobileMoreDrawerOpen(!mobileMoreDrawerOpen)}
-              className={`flex flex-col items-center justify-center py-1 px-1.5 rounded-xl transition-all cursor-pointer ${
-                ['members', 'hero', 'about', 'inquiries', 'database'].includes(activeTab) || mobileMoreDrawerOpen
-                  ? 'text-[#FFD60A] font-bold'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              <Layers className="w-5 h-5 mb-0.5" />
-              <span className="text-[10px]">More</span>
-            </button>
-          </div>
-        </nav>
-      )}
+          {/* More Tools Drawer Button */}
+          <button
+            onClick={() => setMobileMoreDrawerOpen(!mobileMoreDrawerOpen)}
+            className={`flex flex-col items-center justify-center py-1 px-1.5 rounded-xl transition-all cursor-pointer ${
+              ['members', 'hero', 'about', 'inquiries', 'videos', 'rewards'].includes(activeTab) || mobileMoreDrawerOpen
+                ? 'text-[#FFD60A] font-bold'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <Layers className="w-5 h-5 mb-0.5" />
+            <span className="text-[10px]">More</span>
+          </button>
+        </div>
+      </nav>
 
       {/* Slide-Up Mobile Admin "More Tools" Drawer */}
-      {mobileMoreDrawerOpen && deviceMode !== 'laptop' && (
+      {mobileMoreDrawerOpen && (
         <div 
-          className={`${deviceMode === 'auto' ? 'lg:hidden' : 'block'} fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col justify-end animate-in fade-in duration-200`}
+          className="lg:hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col justify-end animate-in fade-in duration-200"
           onClick={() => setMobileMoreDrawerOpen(false)}
         >
           <div 
@@ -1359,17 +1050,6 @@ export const AdminPanel: React.FC = () => {
                   <span>Rewards Images</span>
                 </div>
                 <p className="text-[10px] text-zinc-400">Change 3 tier reward images</p>
-              </button>
-
-              <button
-                onClick={() => { setActiveTab('database'); setMobileMoreDrawerOpen(false); }}
-                className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-left space-y-1 col-span-2"
-              >
-                <div className="flex items-center gap-2 text-white font-bold">
-                  <Database className="w-4 h-4 text-cyan-400" />
-                  <span>Supabase Backend Config</span>
-                </div>
-                <p className="text-[10px] text-zinc-400">Database schema, SQL editor link &amp; sync</p>
               </button>
             </div>
 

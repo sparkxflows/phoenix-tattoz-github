@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { VideoGalleryItem } from '../data/studioData';
 import { getStoredVideos, saveVideos, resetVideos, getStoredArtists, uploadImageToServer } from '../lib/studioContent';
+import { supabase } from '../lib/supabase';
 
 export const AdminVideoGalleryManager: React.FC = () => {
   const [videos, setVideos] = useState<VideoGalleryItem[]>(getStoredVideos);
@@ -51,10 +52,32 @@ export const AdminVideoGalleryManager: React.FC = () => {
   // Available artists for assignment
   const artistsList = useMemo(() => getStoredArtists(), []);
 
-  // Sync from server on mount
+  // Sync directly from Supabase Cloud on mount
   useEffect(() => {
     let isMounted = true;
     const fetchRemote = async () => {
+      // 1. Authoritative Supabase Cloud Store
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'custom_videos')
+          .single();
+
+        if (!error && data && Array.isArray(data.value) && data.value.length > 0) {
+          if (isMounted) {
+            setVideos(data.value);
+            try {
+              localStorage.setItem('phoenix_studio_videos_v1', JSON.stringify(data.value));
+            } catch {}
+          }
+          return;
+        }
+      } catch (e) {
+        // Fallback
+      }
+
+      // 2. Server fallback
       try {
         const res = await fetch('/api/content/custom_videos', { cache: 'no-store' });
         if (res.ok) {

@@ -29,6 +29,7 @@ import {
   DEFAULT_HOME_HERO_SETTINGS,
   uploadImageToServer
 } from '../lib/studioContent';
+import { supabase } from '../lib/supabase';
 
 // Curated high-resolution studio tattoo presets
 const HERO_PRESETS = [
@@ -119,6 +120,34 @@ export const AdminHeroManager: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoFileInputRef = useRef<HTMLInputElement>(null);
   const previewVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Sync directly from Supabase Cloud on mount
+  useEffect(() => {
+    let isMounted = true;
+    const fetchRemote = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'custom_home_hero')
+          .single();
+
+        if (!error && data && data.value && isMounted) {
+          const merged = { ...DEFAULT_HOME_HERO_SETTINGS, ...data.value };
+          setSettings(merged);
+          setUrlInput(merged.heroImage || '');
+          setVideoUrlInput(merged.bgVideoUrl || '');
+          try {
+            localStorage.setItem('phoenix_studio_hero_v1', JSON.stringify(merged));
+          } catch {}
+        }
+      } catch (e) {}
+    };
+    fetchRemote();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Guarantee seamless video loop playback in Section 1 preview
   useEffect(() => {

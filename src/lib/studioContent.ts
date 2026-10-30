@@ -114,17 +114,18 @@ export async function saveArtists(artists: Artist[]): Promise<{ success: boolean
       console.warn('Server artists sync warning:', srvErr);
     }
 
-    // 4. Sync to Supabase site_settings in background (non-blocking)
+    // 4. Sync directly to Supabase site_settings table
     try {
-      await supabase
+      const { error: supaErr } = await supabase
         .from('site_settings')
-        .upsert([
-          {
-            key: 'custom_artists',
-            value: artists,
-            updated_at: new Date().toISOString(),
-          },
-        ]);
+        .upsert({
+          key: 'custom_artists',
+          value: artists,
+          updated_at: new Date().toISOString(),
+        });
+      if (supaErr) {
+        console.warn('Supabase artists sync warning:', supaErr.message);
+      }
     } catch (err) {
       console.warn('Supabase artists sync warning:', err);
     }
@@ -170,9 +171,28 @@ export function useArtists(): Artist[] {
   const [artists, setArtists] = useState<Artist[]>(getStoredArtists);
 
   useEffect(() => {
-    // Remote fetch on mount: Try Express server store first, then Supabase
+    // Remote fetch on mount: Try Supabase Cloud first, then Express server
     const fetchRemote = async () => {
-      // 1. Authoritative Express server store
+      // 1. Authoritative Supabase Cloud Store
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'custom_artists')
+          .single();
+
+        if (!error && data && Array.isArray(data.value) && data.value.length > 0) {
+          try {
+            localStorage.setItem(ARTISTS_STORAGE_KEY, JSON.stringify(data.value));
+          } catch {}
+          setArtists(data.value);
+          return;
+        }
+      } catch (e) {
+        // Fallback
+      }
+
+      // 2. Server store fallback
       try {
         const srvRes = await fetch('/api/content/custom_artists', { cache: 'no-store' });
         if (srvRes.ok) {
@@ -187,24 +207,6 @@ export function useArtists(): Artist[] {
         }
       } catch (e) {
         // Fallback
-      }
-
-      // 2. Supabase fallback
-      try {
-        const { data, error } = await supabase
-          .from('site_settings')
-          .select('value')
-          .eq('key', 'custom_artists')
-          .limit(1);
-
-        if (!error && data && data.length > 0 && Array.isArray(data[0].value) && data[0].value.length > 0) {
-          try {
-            localStorage.setItem(ARTISTS_STORAGE_KEY, JSON.stringify(data[0].value));
-          } catch {}
-          setArtists(data[0].value);
-        }
-      } catch (e) {
-        // Fallback to local
       }
     };
 
@@ -340,9 +342,28 @@ export function useGallery(): GalleryItem[] {
   const [gallery, setGallery] = useState<GalleryItem[]>(getStoredGallery);
 
   useEffect(() => {
-    // Remote fetch on mount
+    // Remote fetch on mount: Try Supabase Cloud first
     const fetchRemote = async () => {
-      // 1. Authoritative Express server store
+      // 1. Authoritative Supabase Cloud Store
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'custom_gallery')
+          .single();
+
+        if (!error && data && Array.isArray(data.value) && data.value.length > 0) {
+          try {
+            localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(data.value));
+          } catch {}
+          setGallery(data.value);
+          return;
+        }
+      } catch (e) {
+        // Fallback
+      }
+
+      // 2. Express server store fallback
       try {
         const srvRes = await fetch('/api/content/custom_gallery', { cache: 'no-store' });
         if (srvRes.ok) {
@@ -357,24 +378,6 @@ export function useGallery(): GalleryItem[] {
         }
       } catch (e) {
         // Fallback
-      }
-
-      // 2. Supabase fallback
-      try {
-        const { data, error } = await supabase
-          .from('site_settings')
-          .select('value')
-          .eq('key', 'custom_gallery')
-          .limit(1);
-
-        if (!error && data && data.length > 0 && Array.isArray(data[0].value) && data[0].value.length > 0) {
-          try {
-            localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(data[0].value));
-          } catch {}
-          setGallery(data[0].value);
-        }
-      } catch (e) {
-        // Fallback to local
       }
     };
 
@@ -503,7 +506,26 @@ export function useVideos(): VideoGalleryItem[] {
 
   useEffect(() => {
     const fetchRemote = async () => {
-      // 1. Authoritative Express server store
+      // 1. Authoritative Supabase Cloud Store
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'custom_videos')
+          .single();
+
+        if (!error && data && Array.isArray(data.value) && data.value.length > 0) {
+          try {
+            localStorage.setItem(VIDEOS_STORAGE_KEY, JSON.stringify(data.value));
+          } catch {}
+          setVideos(data.value);
+          return;
+        }
+      } catch (e) {
+        // Fallback
+      }
+
+      // 2. Express server store fallback
       try {
         const srvRes = await fetch('/api/content/custom_videos', { cache: 'no-store' });
         if (srvRes.ok) {
@@ -518,24 +540,6 @@ export function useVideos(): VideoGalleryItem[] {
         }
       } catch (e) {
         // Fallback
-      }
-
-      // 2. Supabase fallback
-      try {
-        const { data, error } = await supabase
-          .from('site_settings')
-          .select('value')
-          .eq('key', 'custom_videos')
-          .limit(1);
-
-        if (!error && data && data.length > 0 && Array.isArray(data[0].value) && data[0].value.length > 0) {
-          try {
-            localStorage.setItem(VIDEOS_STORAGE_KEY, JSON.stringify(data[0].value));
-          } catch {}
-          setVideos(data[0].value);
-        }
-      } catch (e) {
-        // Fallback to local
       }
     };
 
@@ -711,7 +715,27 @@ export function useHomeHero(): HomeHeroSettings {
 
   useEffect(() => {
     const fetchRemote = async () => {
-      // 1. Fetch authoritative content from Express server storage first
+      // 1. Authoritative Supabase Cloud Store
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'custom_home_hero')
+          .single();
+
+        if (!error && data && data.value) {
+          const merged = { ...DEFAULT_HOME_HERO_SETTINGS, ...data.value };
+          try {
+            localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(merged));
+          } catch {}
+          setHeroSettings(merged);
+          return;
+        }
+      } catch (e) {
+        // Fallback
+      }
+
+      // 2. Fetch from Express server storage fallback
       try {
         const srvRes = await fetch('/api/content/home_hero', { cache: 'no-store' });
         if (srvRes.ok) {
@@ -726,26 +750,7 @@ export function useHomeHero(): HomeHeroSettings {
           }
         }
       } catch (srvErr) {
-        // Fallback to Supabase
-      }
-
-      // 2. Fallback to Supabase site_settings
-      try {
-        const { data, error } = await supabase
-          .from('site_settings')
-          .select('value')
-          .eq('key', 'custom_home_hero')
-          .limit(1);
-
-        if (!error && data && data.length > 0 && data[0].value) {
-          const merged = { ...DEFAULT_HOME_HERO_SETTINGS, ...data[0].value };
-          try {
-            localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(merged));
-          } catch {}
-          setHeroSettings(merged);
-        }
-      } catch (e) {
-        // Fallback to local
+        // Fallback
       }
     };
 

@@ -23,6 +23,7 @@ import {
   GiftsRewardsSettings, 
   DEFAULT_GIFTS_REWARDS_SETTINGS 
 } from '../lib/studioContent';
+import { supabase } from '../lib/supabase';
 
 // Curated presets for each tier
 const TIER1_PRESETS = [
@@ -127,6 +128,35 @@ export const AdminRewardsManager: React.FC<AdminRewardsManagerProps> = ({
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [fileName, setFileName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync directly from Supabase Cloud on mount
+  useEffect(() => {
+    let isMounted = true;
+    const fetchRemote = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'custom_gifts_rewards')
+          .single();
+
+        if (!error && data && data.value && isMounted) {
+          const merged = { ...DEFAULT_GIFTS_REWARDS_SETTINGS, ...data.value };
+          setSettings(merged);
+          setTier1UrlInput(merged.tier1Image || '');
+          setTier2UrlInput(merged.tier2Image || '');
+          setTier3UrlInput(merged.tier3Image || '');
+          try {
+            localStorage.setItem('phoenix_gifts_rewards_v1', JSON.stringify(merged));
+          } catch {}
+        }
+      } catch (e) {}
+    };
+    fetchRemote();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // File upload handler with client-side compression
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, targetTier: 'tier1' | 'tier2' | 'tier3') => {

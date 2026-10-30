@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { GalleryItem } from '../data/studioData';
 import { getStoredGallery, saveGallery, resetGallery, getStoredArtists, uploadImageToServer } from '../lib/studioContent';
+import { supabase } from '../lib/supabase';
 
 export const AdminGalleryManager: React.FC = () => {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(getStoredGallery);
@@ -29,10 +30,32 @@ export const AdminGalleryManager: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
 
-  // Sync latest gallery showcase from server on mount
+  // Sync latest gallery showcase directly from Supabase Cloud on mount
   useEffect(() => {
     let isMounted = true;
     const fetchFreshGallery = async () => {
+      // 1. Authoritative Supabase Cloud Store
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'custom_gallery')
+          .single();
+
+        if (!error && data && Array.isArray(data.value) && data.value.length > 0) {
+          if (isMounted) {
+            setGalleryItems(data.value);
+            try {
+              localStorage.setItem('phoenix_studio_gallery_v1', JSON.stringify(data.value));
+            } catch {}
+          }
+          return;
+        }
+      } catch (e) {
+        // Fallback
+      }
+
+      // 2. Server fallback
       try {
         const res = await fetch('/api/content/custom_gallery', { cache: 'no-store' });
         if (res.ok) {

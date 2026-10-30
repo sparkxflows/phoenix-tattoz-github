@@ -42,6 +42,7 @@ import {
   DEFAULT_STUDIO_PHILOSOPHY,
   syncAllCurrentContentToServer
 } from '../lib/studioContent';
+import { supabase } from '../lib/supabase';
 
 // Quick realistic review templates for admin convenience
 const QUICK_REVIEW_PRESETS = [
@@ -125,6 +126,31 @@ export const AdminReviewsManager: React.FC = () => {
 
   // Editing existing review state
   const [editingReview, setEditingReview] = useState<CustomerReview | null>(null);
+
+  // Sync latest customer reviews directly from Supabase Cloud on mount
+  useEffect(() => {
+    let isMounted = true;
+    const fetchRemote = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'customer_reviews')
+          .single();
+
+        if (!error && data && Array.isArray(data.value) && data.value.length > 0 && isMounted) {
+          setReviews(data.value);
+          try {
+            localStorage.setItem('phoenix_studio_reviews_v1', JSON.stringify(data.value));
+          } catch {}
+        }
+      } catch (e) {}
+    };
+    fetchRemote();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // State for adding new custom/fake review
   const [isAddingReview, setIsAddingReview] = useState(false);
