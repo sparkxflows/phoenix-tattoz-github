@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, MapPin, Clock, Instagram, Facebook, Youtube, Calendar, Lock } from 'lucide-react';
+import { Phone, MapPin, Clock, Instagram, Facebook, Youtube, Calendar } from 'lucide-react';
 import { PhoenixLogo } from './PhoenixLogo';
 import { STUDIO_INFO } from '../data/studioData';
 import { WhatsAppIcon } from './WhatsAppIcon';
@@ -169,10 +169,9 @@ export const Footer: React.FC = () => {
             <span className="text-zinc-700 hidden sm:inline">&bull;</span>
             <Link
               to="/admin"
-              className="text-xs text-zinc-500 hover:text-[#FFD60A] transition-colors inline-flex items-center gap-1 font-medium"
+              className="text-xs text-zinc-500 hover:text-zinc-400 transition-colors inline-flex items-center font-normal"
             >
-              <Lock className="w-3 h-3" />
-              <span>Studio Admin</span>
+              <span>Phoenix Studio</span>
             </Link>
           </div>
 
